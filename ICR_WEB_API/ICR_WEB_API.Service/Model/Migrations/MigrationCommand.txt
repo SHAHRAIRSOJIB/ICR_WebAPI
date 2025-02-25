@@ -1,0 +1,2 @@
+﻿ 1: Add  ----- Add-Migration StudentDetailsAdd -OutputDir "Model\Migrations"
+ 2: Update Database ------ update-database
