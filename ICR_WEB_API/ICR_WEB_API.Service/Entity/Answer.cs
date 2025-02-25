@@ -10,23 +10,17 @@ namespace ICR_WEB_API.Service.Entity
 {
     public class Answer
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        public string Type { get; set; }
+        public string QuestionText { get; set; }
+        public bool IsMandatory { get; set; } = false;
+        public int SortOrder { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
-        [Required]
-        public int UserId { get; set; }
+        public ICollection<Option> Options { get; set; }
+        public ICollection<QuestionCondition> TargetConditions { get; set; }
+        public ICollection<QuestionCondition> ParentConditions { get; set; }
 
-        [Required]
-        public int QuestionId { get; set; }
-
-        public DateTime CreatedAt { get; set; } 
-
-        public DateTime UpdatedAt { get; set; } 
-
-        [ForeignKey("QuestionId")]
-        public Question Question { get; set; }
-
-      
     }
 }

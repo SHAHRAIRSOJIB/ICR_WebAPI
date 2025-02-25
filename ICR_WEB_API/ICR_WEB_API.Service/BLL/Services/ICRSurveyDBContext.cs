@@ -37,9 +37,13 @@ namespace ICR_WEB_API.Service.BLL.Services
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<QuestionCondition>()
-                .Property(q => q.ConditionOperator)
-                .HasColumnName("[Operator]"); // Escapes the column name
+            modelBuilder.Entity<Question>().ToTable("questions");
+            modelBuilder.Entity<Option>().ToTable("options");
+            modelBuilder.Entity<QuestionCondition>().ToTable("question_conditions");
+            modelBuilder.Entity<Answer>().ToTable("answers");
+            modelBuilder.Entity<AnswerOption>().ToTable("answer_options");
+            modelBuilder.Entity<AnswerText>().ToTable("answer_texts");
+            
         }
 
     }
