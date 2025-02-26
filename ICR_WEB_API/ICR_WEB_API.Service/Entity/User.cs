@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ICR_WEB_API.Service.Enum;
 
@@ -13,6 +14,6 @@ namespace ICR_WEB_API.Service.Entity
         public string Name { get; set; }
         public string Email { get; set; }
         public string Password { get; set; }
-        public EnumCollection.UserType UserType { get; set; }
+        public EnumCollection.UserType? UserType { get; set; }
     }
 }

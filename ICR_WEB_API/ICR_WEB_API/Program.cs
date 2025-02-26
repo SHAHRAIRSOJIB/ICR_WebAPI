@@ -10,6 +10,7 @@ builder.Services.AddDbContext<ICRSurveyDBContext>(options =>
 // Add services to the container.
 builder.Services.AddScoped<IQuestionRepo, QuestionsRepo>();
 builder.Services.AddScoped<IAnswerRepo, AnswerRepo>();
+builder.Services.AddScoped<IUserRepo, UserRepo>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
