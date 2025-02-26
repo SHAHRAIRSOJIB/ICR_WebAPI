@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace ICR_WEB_API.Service.BLL.Interface
 {
-    public interface IQuestionRepo 
+    public interface IAnswerRepo 
     {
-        Task<List<Question>> GetAll();
-        Task<int> Save(Question entity);
-        Task<string> Update(Question entity);
+        Task<List<Answer>> GetAll();
+        Task<int> Save(Answer entity);
+        Task<string> Update(Answer entity);
     }
 }

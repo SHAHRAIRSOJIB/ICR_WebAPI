@@ -22,10 +22,11 @@ namespace ICR_WEB_API.Service.BLL.Services
 
         public DbSet<Question> Questions { get; set; }
         public DbSet<Option> Options { get; set; }
-        public DbSet<QuestionCondition> QuestionConditions { get; set; }
+        //public DbSet<QuestionCondition> QuestionConditions { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<AnswerOption> AnswerOptions { get; set; }
         public DbSet<AnswerText> AnswerTexts { get; set; }
+        public DbSet<User> Users { get; set; }  
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -35,16 +36,16 @@ namespace ICR_WEB_API.Service.BLL.Services
                 optionsBuilder.UseSqlServer(connectionString);
             }
         }
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Question>().ToTable("questions");
-            modelBuilder.Entity<Option>().ToTable("options");
-            modelBuilder.Entity<QuestionCondition>().ToTable("question_conditions");
-            modelBuilder.Entity<Answer>().ToTable("answers");
-            modelBuilder.Entity<AnswerOption>().ToTable("answer_options");
-            modelBuilder.Entity<AnswerText>().ToTable("answer_texts");
+        //protected override void OnModelCreating(ModelBuilder modelBuilder)
+        //{
+        //    modelBuilder.Entity<Question>().ToTable("questions");
+        //    modelBuilder.Entity<Option>().ToTable("options");
+        //    modelBuilder.Entity<QuestionCondition>().ToTable("question_conditions");
+        //    modelBuilder.Entity<Answer>().ToTable("answers");
+        //    modelBuilder.Entity<AnswerOption>().ToTable("answer_options");
+        //    modelBuilder.Entity<AnswerText>().ToTable("answer_texts");
             
-        }
+        //}
 
     }
 }

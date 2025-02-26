@@ -11,17 +11,14 @@ namespace ICR_WEB_API.Service.Enum
         public enum QuestionType
         {
             Select,
-            Radio,
             Checkbox,
             Textbox
         }
 
-        public enum ConditionOperator
+        public enum UserType
         {
-            Equals,
-            NotEquals,
-            Contains,
-            NotContains
+            Admin,
+            User
         }
     }
 }

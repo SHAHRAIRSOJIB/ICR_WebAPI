@@ -1,39 +1,39 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace ICR_WEB_API.Service.BLL.Repository
 {
-    public  class QuestionsRepo: IQuestionRepo
+    public class AnswerRepo: IAnswerRepo
     {
-        private readonly ICRSurveyDBContext _surveyDBContext;
-        public QuestionsRepo(ICRSurveyDBContext context)
+        private readonly ICRSurveyDBContext _icrSurveySurveyDBContext;
+
+        public AnswerRepo(ICRSurveyDBContext icrSurveyDbContext)
         {
-                _surveyDBContext = context;
+                _icrSurveySurveyDBContext = icrSurveyDbContext;
         }
-        public async Task<List<Question>> GetAll()
+        public async Task<List<Answer>> GetAll()
         {
-            var list = new List<Question>();
-            list = await _surveyDBContext.Questions.ToListAsync();
+            var list = new List<Answer>();
+            list = await _icrSurveySurveyDBContext.Answers.ToListAsync();
             return list;
         }
 
-        public async Task<int> Save(Question entity)
+        public async Task<int> Save(Answer entity)
         {
             try
             {
                 int res = 0;
                 if (entity != null)
                 {
-                    await _surveyDBContext.Questions.AddAsync(entity);
-                    await _surveyDBContext.SaveChangesAsync();
+                    await _icrSurveySurveyDBContext.Answers.AddAsync(entity);
+                    await _icrSurveySurveyDBContext.SaveChangesAsync();
                     res = entity.Id;
                 }
                 return res;
@@ -45,16 +45,16 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
         }
 
-        public async Task<string> Update(Question entity)
+        public async Task<string> Update(Answer entity)
         {
             try
             {
-                string response = "";    
-                var exist = await _surveyDBContext.Questions.FirstOrDefaultAsync(x => x.Id == entity.Id);
+                string response = "";
+                var exist = await _icrSurveySurveyDBContext.Answers.FirstOrDefaultAsync(x => x.Id == entity.Id);
                 if (exist != null)
                 {
-                    _surveyDBContext.Questions.Update(entity);
-                    await _surveyDBContext.SaveChangesAsync();
+                    _icrSurveySurveyDBContext.Answers.Update(entity);
+                    await _icrSurveySurveyDBContext.SaveChangesAsync();
                     response = "Data Updated Successfully";
 
                 }
@@ -72,4 +72,5 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
     }
+
 }

@@ -8,13 +8,12 @@ using System.Threading.Tasks;
 
 namespace ICR_WEB_API.Service.Entity
 {
-    public class Option
+    public class Option // Checkbox (multiple choice), Select (single)
     {
         public int Id { get; set; }
-        public int QuestionId { get; set; }
         public string OptionText { get; set; }
-        public int? SortOrder { get; set; }
 
+        public int QuestionId { get; set; }
         public Question Question { get; set; }
 
     }

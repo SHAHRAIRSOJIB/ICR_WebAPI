@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace ICR_WEB_API.Service.Entity
 {
-    public class AnswerText
+    public class AnswerText // for Text input
     {
         public int Id { get; set; }
-        public int AnswerId { get; set; }
         public string Text { get; set; }
 
+        public int AnswerId { get; set; }
         public Answer Answer { get; set; }
     }
 }
