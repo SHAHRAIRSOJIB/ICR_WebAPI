@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ICR_WEB_API.Service.Enum;
+using ICR_WEB_API.Service.Model;
+using Microsoft.IdentityModel.Tokens;
 
 namespace ICR_WEB_API.Service.BLL.Repository
 {
@@ -87,6 +89,35 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     res = entity.Id;
                 }
                 return res;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+        }
+
+        public async Task<LoginResponse> VerifyUser(string userName,string password)
+        {
+            try
+            {
+                LoginResponse LoginResponse = new LoginResponse();
+                if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
+                {
+                    var user = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x =>
+                        x.Email == userName && x.Password == password);
+                    if (user != null)
+                    {
+                        LoginResponse.Email = user.Email;
+                        LoginResponse.Id = user.Id;
+                        LoginResponse.Name = user.Name;
+                    }
+                    else
+                    {
+                        LoginResponse = null;
+                    }
+                }
+                return LoginResponse;
             }
             catch (Exception ex)
             {
