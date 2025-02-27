@@ -1,6 +1,5 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.Entity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
@@ -12,14 +11,14 @@ namespace ICR_WEB_API.Controllers
         private readonly IAuthService _authService;
         private readonly IUserRepo _userRepo;
 
-        public AuthController(IAuthService authService,IUserRepo userRepo)
+        public AuthController(IAuthService authService, IUserRepo userRepo)
         {
             _authService = authService;
             _userRepo = userRepo;
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(string userName,string password)
+        public async Task<IActionResult> Login(string userName, string password)
         {
             var result = await _authService.AuthenticateUser(userName, password);
 
@@ -31,7 +30,7 @@ namespace ICR_WEB_API.Controllers
             return Ok(result);
         }
         [HttpPost("RegisterUser")]
-        public async Task<IActionResult> RegisterUser([FromBody]User user)
+        public async Task<IActionResult> RegisterUser([FromBody] User user)
         {
             var result = await _userRepo.SaveUser(user);
 

@@ -1,19 +1,14 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using ICR_WEB_API.Service.Enum;
 using ICR_WEB_API.Service.Model;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace ICR_WEB_API.Service.BLL.Repository
 {
-    public  class UserRepo : IUserRepo
+    public class UserRepo : IUserRepo
     {
         private readonly ICRSurveyDBContext _icrSurveySurveyDBContext;
 
@@ -97,7 +92,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
         }
 
-        public async Task<LoginResponse> VerifyUser(string userName,string password)
+        public async Task<LoginResponse> VerifyUser(string userName, string password)
         {
             try
             {

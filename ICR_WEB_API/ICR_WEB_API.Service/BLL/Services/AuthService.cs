@@ -1,19 +1,15 @@
-﻿using Microsoft.Extensions.Configuration;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.Model;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using ICR_WEB_API.Service.BLL.Interface;
+using System.Text;
 
 namespace ICR_WEB_API.Service.BLL.Services
 {
-    public class AuthService:IAuthService
+    public class AuthService : IAuthService
     {
 
         private readonly ICRSurveyDBContext _context;

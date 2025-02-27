@@ -1,22 +1,17 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICR_WEB_API.Service.BLL.Repository
 {
-    public class AnswerRepo: IAnswerRepo
+    public class AnswerRepo : IAnswerRepo
     {
         private readonly ICRSurveyDBContext _icrSurveySurveyDBContext;
 
         public AnswerRepo(ICRSurveyDBContext icrSurveyDbContext)
         {
-                _icrSurveySurveyDBContext = icrSurveyDbContext;
+            _icrSurveySurveyDBContext = icrSurveyDbContext;
         }
         public async Task<List<Answer>> GetAll()
         {

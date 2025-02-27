@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ICR_WEB_API.Service.Enum
+﻿namespace ICR_WEB_API.Service.Enum
 {
     public class EnumCollection
     {
@@ -12,7 +6,8 @@ namespace ICR_WEB_API.Service.Enum
         {
             Select,
             Checkbox,
-            Textbox
+            Rating,
+            Text
         }
 
         public enum UserType

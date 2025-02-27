@@ -30,66 +30,36 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("QuestionText")
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RatingItemId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("RatingValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ResponseId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("SelectedOptionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TextResponse")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("RatingItemId");
+
+                    b.HasIndex("ResponseId");
+
+                    b.HasIndex("SelectedOptionId");
 
                     b.ToTable("Answers");
-                });
-
-            modelBuilder.Entity("ICR_WEB_API.Service.Entity.AnswerOption", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnswerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OptionId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerId");
-
-                    b.HasIndex("OptionId");
-
-                    b.ToTable("AnswerOptions");
-                });
-
-            modelBuilder.Entity("ICR_WEB_API.Service.Entity.AnswerText", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("AnswerId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AnswerId");
-
-                    b.ToTable("AnswerTexts");
                 });
 
             modelBuilder.Entity("ICR_WEB_API.Service.Entity.Option", b =>
@@ -100,9 +70,6 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("AnswerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("OptionText")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -110,12 +77,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     b.Property<int>("QuestionId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Value")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("AnswerId");
 
                     b.HasIndex("QuestionId");
 
@@ -130,10 +92,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("IsMandatory")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("QuestionText")
+                    b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -143,6 +102,49 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Questions");
+                });
+
+            modelBuilder.Entity("ICR_WEB_API.Service.Entity.RatingScaleItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ItemText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("QuestionId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("RatingScaleItems");
+                });
+
+            modelBuilder.Entity("ICR_WEB_API.Service.Entity.Response", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("SubmissionDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Response");
                 });
 
             modelBuilder.Entity("ICR_WEB_API.Service.Entity.User", b =>
@@ -175,6 +177,59 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
             modelBuilder.Entity("ICR_WEB_API.Service.Entity.Answer", b =>
                 {
+                    b.HasOne("ICR_WEB_API.Service.Entity.Question", "Question")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ICR_WEB_API.Service.Entity.RatingScaleItem", "RatingItem")
+                        .WithMany()
+                        .HasForeignKey("RatingItemId");
+
+                    b.HasOne("ICR_WEB_API.Service.Entity.Response", "Response")
+                        .WithMany("Answers")
+                        .HasForeignKey("ResponseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ICR_WEB_API.Service.Entity.Option", "SelectedOption")
+                        .WithMany()
+                        .HasForeignKey("SelectedOptionId");
+
+                    b.Navigation("Question");
+
+                    b.Navigation("RatingItem");
+
+                    b.Navigation("Response");
+
+                    b.Navigation("SelectedOption");
+                });
+
+            modelBuilder.Entity("ICR_WEB_API.Service.Entity.Option", b =>
+                {
+                    b.HasOne("ICR_WEB_API.Service.Entity.Question", "Question")
+                        .WithMany("Options")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("ICR_WEB_API.Service.Entity.RatingScaleItem", b =>
+                {
+                    b.HasOne("ICR_WEB_API.Service.Entity.Question", "Question")
+                        .WithMany("RatingScaleItems")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("ICR_WEB_API.Service.Entity.Response", b =>
+                {
                     b.HasOne("ICR_WEB_API.Service.Entity.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -184,54 +239,16 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("ICR_WEB_API.Service.Entity.AnswerOption", b =>
-                {
-                    b.HasOne("ICR_WEB_API.Service.Entity.Answer", "Answer")
-                        .WithMany()
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("ICR_WEB_API.Service.Entity.Option", "Option")
-                        .WithMany()
-                        .HasForeignKey("OptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
-
-                    b.Navigation("Option");
-                });
-
-            modelBuilder.Entity("ICR_WEB_API.Service.Entity.AnswerText", b =>
-                {
-                    b.HasOne("ICR_WEB_API.Service.Entity.Answer", "Answer")
-                        .WithMany()
-                        .HasForeignKey("AnswerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Answer");
-                });
-
-            modelBuilder.Entity("ICR_WEB_API.Service.Entity.Option", b =>
-                {
-                    b.HasOne("ICR_WEB_API.Service.Entity.Answer", null)
-                        .WithMany("Options")
-                        .HasForeignKey("AnswerId");
-
-                    b.HasOne("ICR_WEB_API.Service.Entity.Question", "Question")
-                        .WithMany()
-                        .HasForeignKey("QuestionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-                });
-
-            modelBuilder.Entity("ICR_WEB_API.Service.Entity.Answer", b =>
+            modelBuilder.Entity("ICR_WEB_API.Service.Entity.Question", b =>
                 {
                     b.Navigation("Options");
+
+                    b.Navigation("RatingScaleItems");
+                });
+
+            modelBuilder.Entity("ICR_WEB_API.Service.Entity.Response", b =>
+                {
+                    b.Navigation("Answers");
                 });
 #pragma warning restore 612, 618
         }

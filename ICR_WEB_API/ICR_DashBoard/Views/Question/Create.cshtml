@@ -1,0 +1,54 @@
+﻿
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+}
+
+<h1>Create</h1>
+
+<form id="questionForm"  asp-action="Create" asp-controller="Question"> 
+  <label for="question">Question:</label>
+  <input type="text" id="question" name="question" required />
+  <br /><br />
+  <div id="optionsContainer">
+    <!-- Options will be added here dynamically -->
+  </div>
+  <br />
+  <button type="button" id="addOption">Add Option</button>
+  <br /><br />
+  <button type="submit">Submit</button>
+</form>
+
+@section Scripts{
+<script>
+    $(document).ready(function () {
+      let optionIndex = 1;
+
+      $("#addOption").click(function () {
+        let optionHtml = `
+              <div class="option">
+                  <label>Option ${optionIndex}:</label>
+                  <input type="text" name="option_text[]" placeholder="Option Text" required>
+                  <input type="text" name="option_value[]" placeholder="Option Value" value="-1">
+                  <button type="button" class="removeOption">Remove</button>
+                  <br>
+              </div>
+          `;
+        optionIndex++;
+        $("#optionsContainer").append(optionHtml);
+      });
+
+      $(document).on("click", ".removeOption", function () {
+        $(this).parent(".option").remove();
+      });
+
+      // $("#questionForm").submit(function (event) {
+      //   event.preventDefault();
+
+      //   let formData = $(this).serializeArray();
+      //   console.log(formData); // Submitting the form data
+      // });
+    });
+</script>
+}

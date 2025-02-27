@@ -22,8 +22,6 @@
     <ProjectReference Include="..\ICR_WEB_API.Service\ICR_WEB_API.Service.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Helper\" />
-  </ItemGroup>
+
 
 </Project>

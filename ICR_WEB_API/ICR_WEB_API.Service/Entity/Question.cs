@@ -1,24 +1,16 @@
-﻿using Microsoft.VisualBasic.FileIO;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ICR_WEB_API.Service.Enum;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using static ICR_WEB_API.Service.Enum.EnumCollection;
 
 namespace ICR_WEB_API.Service.Entity
 {
     public class Question
     {
         public int Id { get; set; }
+        public string Text { get; set; }
+        public QuestionType Type { get; set; }
 
-        public EnumCollection.QuestionType Type { get; set; }
+        // Relationships (only populated based on question type)
+        public virtual ICollection<Option> Options { get; set; }      // For Select/Checkbox
+        public virtual ICollection<RatingScaleItem> RatingScaleItems { get; set; } // For Rating questions
 
-        public string QuestionText { get; set; }
-
-        public bool IsMandatory { get; set; } = false;
-      
     }
 }

@@ -2,21 +2,15 @@
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ICR_WEB_API.Service.BLL.Repository
 {
-    public  class QuestionsRepo: IQuestionRepo
+    public class QuestionsRepo : IQuestionRepo
     {
         private readonly ICRSurveyDBContext _surveyDBContext;
         public QuestionsRepo(ICRSurveyDBContext context)
         {
-                _surveyDBContext = context;
+            _surveyDBContext = context;
         }
         public async Task<List<Question>> GetAll()
         {
@@ -49,7 +43,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
         {
             try
             {
-                string response = "";    
+                string response = "";
                 var exist = await _surveyDBContext.Questions.FirstOrDefaultAsync(x => x.Id == entity.Id);
                 if (exist != null)
                 {
