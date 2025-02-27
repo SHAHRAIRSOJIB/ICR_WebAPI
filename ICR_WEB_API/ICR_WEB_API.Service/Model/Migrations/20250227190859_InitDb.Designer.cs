@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICR_WEB_API.Service.Model.Migrations
 {
     [DbContext(typeof(ICRSurveyDBContext))]
-    [Migration("20250227002207_init-filtered")]
-    partial class initfiltered
+    [Migration("20250227190859_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

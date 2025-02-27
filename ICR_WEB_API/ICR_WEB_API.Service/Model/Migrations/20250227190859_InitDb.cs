@@ -5,7 +5,7 @@
 namespace ICR_WEB_API.Service.Model.Migrations
 {
     /// <inheritdoc />
-    public partial class initfiltered : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

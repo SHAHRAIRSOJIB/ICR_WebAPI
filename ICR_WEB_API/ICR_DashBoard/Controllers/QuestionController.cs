@@ -22,7 +22,7 @@ namespace ICR_DashBoard.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> Create(Question question)
+        public async Task<IActionResult> Create([FromBody] Question question)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace ICR_DashBoard.Controllers
                     int savedId = await _questionRepo.Save(question);
                     if (savedId > 0)
                     {
-                        return Ok(new { message = "Question created successfully", data = question });
+                        return Ok();
                     }
                     else
                     {
