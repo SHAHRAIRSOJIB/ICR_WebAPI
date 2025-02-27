@@ -46,7 +46,6 @@ namespace ICR_WEB_API.Service.Model.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TextResponse")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

@@ -20,16 +20,16 @@ namespace ICR_WEB_API.Service.BLL.Repository
             return list;
         }
 
-        public async Task<int> Save(Answer entity)
+        public async Task<int> Save(List<Answer> entities)
         {
             try
             {
                 int res = 0;
-                if (entity != null)
+                if (entities != null)
                 {
-                    await _icrSurveySurveyDBContext.Answers.AddAsync(entity);
-                    await _icrSurveySurveyDBContext.SaveChangesAsync();
-                    res = entity.Id;
+                    await _icrSurveySurveyDBContext.Answers.AddRangeAsync(entities);
+                    var resDB = await _icrSurveySurveyDBContext.SaveChangesAsync();
+                    return resDB > 0? res=resDB : 0;
                 }
                 return res;
             }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICR_WEB_API.Service.Model.Migrations
 {
     [DbContext(typeof(ICRSurveyDBContext))]
-    [Migration("20250227200424_InitDb")]
+    [Migration("20250227210234_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -49,7 +49,6 @@ namespace ICR_WEB_API.Service.Model.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("TextResponse")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

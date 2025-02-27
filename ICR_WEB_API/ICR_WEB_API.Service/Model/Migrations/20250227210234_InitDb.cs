@@ -120,7 +120,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     SelectedOptionId = table.Column<int>(type: "int", nullable: true),
                     RatingItemId = table.Column<int>(type: "int", nullable: true),
                     RatingValue = table.Column<int>(type: "int", nullable: true),
-                    TextResponse = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    TextResponse = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {

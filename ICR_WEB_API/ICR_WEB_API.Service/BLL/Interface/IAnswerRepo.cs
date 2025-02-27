@@ -5,7 +5,7 @@ namespace ICR_WEB_API.Service.BLL.Interface
     public interface IAnswerRepo
     {
         Task<List<Answer>> GetAll();
-        Task<int> Save(Answer entity);
+        Task<int> Save(List<Answer> entities);
         Task<string> Update(Answer entity);
     }
 }
