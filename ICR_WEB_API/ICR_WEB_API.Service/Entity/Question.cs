@@ -9,8 +9,8 @@ namespace ICR_WEB_API.Service.Entity
         public QuestionType Type { get; set; }
 
         // Relationships (only populated based on question type)
-        public virtual ICollection<Option> Options { get; set; }      // For Select/Checkbox
-        public virtual ICollection<RatingScaleItem> RatingScaleItems { get; set; } // For Rating questions
+        public virtual ICollection<Option>? Options { get; set; }      // For Select/Checkbox
+        public virtual ICollection<RatingScaleItem>? RatingScaleItems { get; set; } // For Rating questions
 
     }
 }
