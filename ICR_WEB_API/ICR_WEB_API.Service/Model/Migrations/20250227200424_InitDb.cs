@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -87,6 +88,14 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     SubmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ShopName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UnifiedLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LicenseIssueDateLabel = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OwnerIDNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    AIESECActivity = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Municipality = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FullAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

@@ -5,6 +5,16 @@
         public int Id { get; set; }
         public DateTime SubmissionDate { get; set; }
 
+        // Shop/License Metadata
+        public string ShopName { get; set; }                    // اسم المحل
+        public string OwnerName { get; set; }                   // اسم المالك
+        public string UnifiedLicenseNumber { get; set; }        // رقم الرخصة الموحد
+        public string LicenseIssueDateLabel { get; set; }       // تاريخ اصدار الرخصة
+        public string OwnerIDNumber { get; set; }               // رقم هوية المالك
+        public string AIESECActivity { get; set; }              // نشاط الايزك
+        public string Municipality { get; set; }                // البلدية
+        public string FullAddress { get; set; }                 // العنوان الكامل
+        
         // Navigation Property
         public int UserId { get; set; }
         public virtual User User { get; set; }
