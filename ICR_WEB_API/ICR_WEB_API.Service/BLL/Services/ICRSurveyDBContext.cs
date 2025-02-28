@@ -18,7 +18,7 @@ namespace ICR_WEB_API.Service.BLL.Services
         public DbSet<Option> Options { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<RatingScaleItem> RatingScaleItems { get; set; }
-        public DbSet<Response> Response { get; set; }
+        public DbSet<Response> Responses { get; set; }
         public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

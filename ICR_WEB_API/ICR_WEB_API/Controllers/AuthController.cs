@@ -26,8 +26,9 @@ namespace ICR_WEB_API.Controllers
             {
                 return Unauthorized(new { message = "Invalid credentials" });
             }
-
-            return Ok(result);
+            else {
+                return Ok(result);
+            }
         }
         [HttpPost("RegisterUser")]
         public async Task<IActionResult> RegisterUser([FromBody] User user)
