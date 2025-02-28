@@ -36,7 +36,7 @@ namespace ICR_WEB_API.Controllers
         {
             var result = await _userRepo.SaveUser(user);
 
-            if (result != 0)
+            if (result <= 0)
             {
                 return BadRequest(new { message = "User registration failed" });
             }
