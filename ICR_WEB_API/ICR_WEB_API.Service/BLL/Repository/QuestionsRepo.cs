@@ -14,9 +14,17 @@ namespace ICR_WEB_API.Service.BLL.Repository
         }
         public async Task<List<Question>> GetAll()
         {
-            var list = new List<Question>();
-            list = await _surveyDBContext.Questions.ToListAsync();
-            return list;
+            try
+            {
+                var list = new List<Question>();
+                list = await _surveyDBContext.Questions.Include(x => x.Options).Include(x => x.RatingScaleItems).ToListAsync();
+                return list;
+            }
+            catch (Exception ex) {
+                throw ex;
+            }
+
+          
         }
 
         public async Task<int> Save(Question entity)

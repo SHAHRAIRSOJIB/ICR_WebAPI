@@ -1,4 +1,5 @@
-﻿using ICR_WEB_API.Service.BLL.Services;
+﻿using ICR_WEB_API.Service.BLL.Interface;
+using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace ICR_WEB_API.Service.BLL.Repository
 {
-    public class ResponseRepo
+    public class ResponseRepo: IResponseRepo
     {
         private readonly ICRSurveyDBContext _iCRSurveyDBContext;
         public ResponseRepo(ICRSurveyDBContext iCRSurveyDBContext)

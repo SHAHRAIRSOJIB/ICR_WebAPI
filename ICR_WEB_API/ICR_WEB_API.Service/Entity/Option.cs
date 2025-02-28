@@ -1,4 +1,6 @@
-﻿namespace ICR_WEB_API.Service.Entity
+﻿using System.Text.Json.Serialization;
+
+namespace ICR_WEB_API.Service.Entity
 {
     public class Option
     {
@@ -7,6 +9,7 @@
 
         // Foreign Key
         public int QuestionId { get; set; }
+        [JsonIgnore]
         public virtual Question? Question { get; set; }
 
     }

@@ -22,12 +22,13 @@ namespace ICR_WEB_API.Controllers
         {
             var result = await _authService.AuthenticateUser(userName, password);
 
-            if (result == null)
+            if (result.Token != null)
+            {
+                return Ok(result);
+            }
+            else
             {
                 return Unauthorized(new { message = "Invalid credentials" });
-            }
-            else {
-                return Ok(result);
             }
         }
         [HttpPost("RegisterUser")]
@@ -35,7 +36,7 @@ namespace ICR_WEB_API.Controllers
         {
             var result = await _userRepo.SaveUser(user);
 
-            if (result == null)
+            if (result != 0)
             {
                 return BadRequest(new { message = "User registration failed" });
             }
