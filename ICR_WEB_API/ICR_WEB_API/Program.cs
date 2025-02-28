@@ -1,10 +1,10 @@
+using System.Text;
 using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Repository;
 using ICR_WEB_API.Service.BLL.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnectionString");

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-
-namespace ICR_WEB_API.Service.Entity
+﻿namespace ICR_WEB_API.Service.Entity
 {
     public class Option
     {

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static ICR_WEB_API.Service.Enum.EnumCollection;
+﻿using static ICR_WEB_API.Service.Enum.EnumCollection;
 
 namespace ICR_WEB_API.Service.Model.DTOs
 {
@@ -13,7 +8,7 @@ namespace ICR_WEB_API.Service.Model.DTOs
         public string Text { get; set; }
         public QuestionType Type { get; set; }
         public List<OptionDTO>? Options { get; set; }
-        public List<RatingScaleItemDTO>? RatingScaleItems{ get; set; }
+        public List<RatingScaleItemDTO>? RatingScaleItems { get; set; }
     }
     public class OptionDTO
     {

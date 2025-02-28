@@ -29,7 +29,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 {
                     await _icrSurveySurveyDBContext.Answers.AddRangeAsync(entities);
                     var resDB = await _icrSurveySurveyDBContext.SaveChangesAsync();
-                    return resDB > 0? res=resDB : 0;
+                    return resDB > 0 ? res = resDB : 0;
                 }
                 return res;
             }

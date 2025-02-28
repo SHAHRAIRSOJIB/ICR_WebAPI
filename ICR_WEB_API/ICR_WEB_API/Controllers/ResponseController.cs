@@ -1,7 +1,5 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
-using ICR_WEB_API.Service.BLL.Repository;
 using ICR_WEB_API.Service.Entity;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
@@ -13,7 +11,7 @@ namespace ICR_WEB_API.Controllers
         private readonly IResponseRepo _responseRepo;
         public ResponseController(IResponseRepo responseRepo)
         {
-            _responseRepo = responseRepo;   
+            _responseRepo = responseRepo;
         }
         [HttpGet]
         public async Task<Response> GetResponseById(int id)
