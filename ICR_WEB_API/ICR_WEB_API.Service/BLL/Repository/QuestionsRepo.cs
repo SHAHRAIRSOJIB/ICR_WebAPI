@@ -1,6 +1,7 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICR_WEB_API.Service.BLL.Repository
@@ -12,20 +13,40 @@ namespace ICR_WEB_API.Service.BLL.Repository
         {
             _surveyDBContext = context;
         }
-        public async Task<List<Question>> GetAll()
+        public async Task<List<QuestionDTO>> GetAll()
         {
             try
             {
-                var list = new List<Question>();
-                list = await _surveyDBContext.Questions.Include(x => x.Options).Include(x => x.RatingScaleItems).ToListAsync();
-                return list;
+                var list = await _surveyDBContext.Questions
+                    .Include(x => x.Options)
+                    .Include(x => x.RatingScaleItems)
+                    .ToListAsync();
+
+                var questionDTOs = list.Select(q => new QuestionDTO
+                {
+                    Id = q.Id,
+                    Text = q.Text,
+                    Type = q.Type,
+                    Options = q.Options?.Select(o => new OptionDTO
+                    {
+                        Id = o.Id,
+                        OptionText = o.OptionText
+                    }).ToList(),
+                    RatingScaleItems = q.RatingScaleItems?.Select(r => new RatingScaleItemDTO
+                    {
+                        Id = r.Id,
+                        ItemText = r.ItemText
+                    }).ToList()
+                }).ToList();
+
+                return questionDTOs;
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 throw ex;
             }
-
-          
         }
+
 
         public async Task<int> Save(Question entity)
         {

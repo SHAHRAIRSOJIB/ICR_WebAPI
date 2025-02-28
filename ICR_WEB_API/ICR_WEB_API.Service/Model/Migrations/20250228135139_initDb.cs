@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ICR_WEB_API.Service.Model.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDb : Migration
+    public partial class initDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -82,7 +82,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Response",
+                name: "Responses",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -100,9 +100,9 @@ namespace ICR_WEB_API.Service.Model.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Response", x => x.Id);
+                    table.PrimaryKey("PK_Responses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Response_Users_UserId",
+                        name: "FK_Responses_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -142,9 +142,9 @@ namespace ICR_WEB_API.Service.Model.Migrations
                         principalTable: "RatingScaleItems",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Answers_Response_ResponseId",
+                        name: "FK_Answers_Responses_ResponseId",
                         column: x => x.ResponseId,
-                        principalTable: "Response",
+                        principalTable: "Responses",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -180,8 +180,8 @@ namespace ICR_WEB_API.Service.Model.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Response_UserId",
-                table: "Response",
+                name: "IX_Responses_UserId",
+                table: "Responses",
                 column: "UserId");
         }
 
@@ -198,7 +198,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
                 name: "RatingScaleItems");
 
             migrationBuilder.DropTable(
-                name: "Response");
+                name: "Responses");
 
             migrationBuilder.DropTable(
                 name: "Questions");

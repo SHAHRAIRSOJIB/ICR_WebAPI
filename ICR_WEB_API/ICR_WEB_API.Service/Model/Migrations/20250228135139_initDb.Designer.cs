@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICR_WEB_API.Service.Model.Migrations
 {
     [DbContext(typeof(ICRSurveyDBContext))]
-    [Migration("20250227210234_InitDb")]
-    partial class InitDb
+    [Migration("20250228135139_initDb")]
+    partial class initDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -178,7 +178,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Response");
+                    b.ToTable("Responses");
                 });
 
             modelBuilder.Entity("ICR_WEB_API.Service.Entity.User", b =>

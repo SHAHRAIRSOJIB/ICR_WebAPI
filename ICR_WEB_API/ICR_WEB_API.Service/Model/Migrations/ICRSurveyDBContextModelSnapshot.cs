@@ -175,7 +175,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Response");
+                    b.ToTable("Responses");
                 });
 
             modelBuilder.Entity("ICR_WEB_API.Service.Entity.User", b =>

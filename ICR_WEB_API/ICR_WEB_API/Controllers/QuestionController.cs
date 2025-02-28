@@ -1,5 +1,6 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.Entity;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
@@ -17,7 +18,7 @@ namespace ICR_WEB_API.Controllers
         }
 
         [HttpGet]
-        public async Task<List<Question>> GetAllQuestion()
+        public async Task<List<QuestionDTO>> GetAllQuestion()
         {
             var list = await _questionRepo.GetAll();
             return list;

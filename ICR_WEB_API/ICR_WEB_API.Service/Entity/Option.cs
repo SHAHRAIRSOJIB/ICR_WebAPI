@@ -9,7 +9,7 @@ namespace ICR_WEB_API.Service.Entity
 
         // Foreign Key
         public int QuestionId { get; set; }
-        [JsonIgnore]
+
         public virtual Question? Question { get; set; }
 
     }
