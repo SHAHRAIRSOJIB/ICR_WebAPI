@@ -1,6 +1,7 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICR_WEB_API.Service.BLL.Repository
@@ -13,12 +14,65 @@ namespace ICR_WEB_API.Service.BLL.Repository
         {
             _icrSurveySurveyDBContext = icrSurveyDbContext;
         }
-        public async Task<List<Answer>> GetAll()
+        public async Task<List<AnswerDTO>> GetAll()
         {
-            var list = new List<Answer>();
-            list = await _icrSurveySurveyDBContext.Answers.ToListAsync();
-            return list;
+            var list = await _icrSurveySurveyDBContext.Answers
+                .Include(x => x.Question)
+                    .ThenInclude(q => q.Options)
+                .Include(x => x.Question)
+                    .ThenInclude(q => q.RatingScaleItems)
+                .Include(x => x.Response)
+                .ToListAsync();
+
+            var answerDTOs = list.Select(a => new AnswerDTO
+            {
+                Id = a.Id,
+                ResponseId = a.ResponseId,
+                QuestionId = a.QuestionId,
+                SelectedOptionId = a.SelectedOptionId,
+                RatingItemId = a.RatingItemId,
+                RatingValue = a.RatingValue,
+                TextResponse = a.TextResponse,
+
+                // Map Question to QuestionDTO
+                Question = a.Question != null ? new QuestionDTO
+                {
+                    Id = a.Question.Id,
+                    Text = a.Question.Text,
+                    Type = a.Question.Type,
+                    Options = a.Question.Options?.Select(o => new OptionDTO
+                    {
+                        Id = o.Id,
+                        OptionText = o.OptionText
+                    }).ToList(),
+                    RatingScaleItems = a.Question.RatingScaleItems?.Select(r => new RatingScaleItemDTO
+                    {
+                        Id = r.Id,
+                        ItemText = r.ItemText
+                    }).ToList()
+                } : null,
+
+                // Map Response to ResponseDTO
+                Response = a.Response != null ? new ResponseDTO
+                {
+                    Id = a.Response.Id,
+                    SubmissionDate = a.Response.SubmissionDate,
+                    ShopName = a.Response.ShopName,
+                    OwnerName = a.Response.OwnerName,
+                    UnifiedLicenseNumber = a.Response.UnifiedLicenseNumber,
+                    LicenseIssueDateLabel = a.Response.LicenseIssueDateLabel,
+                    OwnerIDNumber = a.Response.OwnerIDNumber,
+                    AIESECActivity = a.Response.AIESECActivity,
+                    Municipality = a.Response.Municipality,
+                    FullAddress = a.Response.FullAddress,
+                    UserId = a.Response.UserId
+                } : null
+
+            }).ToList();
+
+            return answerDTOs;
         }
+
 
         public async Task<int> Save(List<Answer> entities)
         {

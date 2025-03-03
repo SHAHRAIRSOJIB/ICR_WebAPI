@@ -1,11 +1,33 @@
-﻿namespace ICR_WEB_API.Service.Entity
+﻿using ICR_WEB_API.Service.Entity;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ICR_WEB_API.Service.Model.DTOs
 {
-    public class Response
+    public class AnswerDTO
     {
+        public int Id { get; set; }
+
+        public int ResponseId { get; set; }
+        public int QuestionId { get; set; }
+
+        public int? SelectedOptionId { get; set; }
+
+        public int? RatingItemId { get; set; }
+        public int? RatingValue { get; set; } 
+
+        public string? TextResponse { get; set; }
+
+        public  QuestionDTO? Question { get; set; }
+        public  ResponseDTO? Response { get; set; }
+    }
+    public class ResponseDTO {
         public int Id { get; set; }
         public DateTime SubmissionDate { get; set; }
 
-        // Shop/License Metadata
         public string ShopName { get; set; }                    // اسم المحل
         public string OwnerName { get; set; }                   // اسم المالك
         public string UnifiedLicenseNumber { get; set; }        // رقم الرخصة الموحد
@@ -15,11 +37,12 @@
         public string Municipality { get; set; }                // البلدية
         public string FullAddress { get; set; }                 // العنوان الكامل
 
-        public string  DistrictName { get; set; }
-        public string  StreetName { get; set; }
         // Navigation Property
         public int UserId { get; set; }
-        public virtual User User { get; set; }
-        public virtual ICollection<Answer> Answers { get; set; }
     }
+
+   
+
+
+
 }
