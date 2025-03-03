@@ -1,5 +1,4 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
-using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_DashBoard.Controllers
@@ -9,13 +8,13 @@ namespace ICR_DashBoard.Controllers
         private readonly IAnswerRepo _answerRepo;
         public AnswerController(IAnswerRepo answerRepo)
         {
-                _answerRepo = answerRepo;
+            _answerRepo = answerRepo;
         }
         public IActionResult Index()
         {
             return View();
         }
-        public IActionResult Report() 
+        public IActionResult Report()
         {
             return View();
         }
@@ -25,9 +24,5 @@ namespace ICR_DashBoard.Controllers
             var answers = await _answerRepo.GetAll();
             return Json(answers);
         }
-
-
-
-
     }
 }

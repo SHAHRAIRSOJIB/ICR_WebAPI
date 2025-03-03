@@ -8,7 +8,7 @@ namespace ICR_WEB_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AnswerController : ControllerBase
     {
         private readonly IAnswerRepo _answerRepo;

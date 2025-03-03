@@ -1,13 +1,14 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.Entity;
 using ICR_WEB_API.Service.Model.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class QuestionController : ControllerBase
     {
         private readonly IQuestionRepo _questionRepo;

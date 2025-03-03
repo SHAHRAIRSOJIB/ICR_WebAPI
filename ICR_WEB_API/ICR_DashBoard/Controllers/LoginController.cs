@@ -35,6 +35,5 @@ namespace ICR_DashBoard.Controllers
                 return View("Index");  // Stay on login page and show message
             }
         }
-
     }
 }
