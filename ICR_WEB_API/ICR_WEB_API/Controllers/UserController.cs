@@ -38,5 +38,11 @@ namespace ICR_WEB_API.Controllers
         {
             return await _userRepo.SaveAdmin(entity);
         }
+        [HttpPost("resetPassword")]
+        public async Task<string> ResetPassword(ForgetPasswordDTO resetPasswordDTO)
+        {
+            return await _userRepo.ForgetPassword(resetPasswordDTO);
+        }
+
     }
 }

@@ -21,7 +21,7 @@
 
         // Navigation Property
         public int UserId { get; set; }
-        public virtual User User { get; set; }
-        public virtual ICollection<Answer> Answers { get; set; }
+        public virtual User? User { get; set; }
+        public virtual ICollection<Answer>? Answers { get; set; }
     }
 }

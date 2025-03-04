@@ -28,8 +28,14 @@ namespace ICR_WEB_API.Service.BLL.Repository
             try
             {
                 int res = 0;
+                
                 if (entity != null)
                 {
+                    var userExistance = await _icrSurveySurveyDBContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == entity.Email);
+                    if (userExistance != null)
+                    {
+                        return res = 3;
+                    }
                     entity.UserType = EnumCollection.UserType.User;
                     await _icrSurveySurveyDBContext.Users.AddAsync(entity);
                     await _icrSurveySurveyDBContext.SaveChangesAsync();
@@ -119,6 +125,34 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 throw ex;
             }
 
+        }
+
+        public async Task<string> ForgetPassword(ForgetPasswordDTO resetPasswordDTO)
+        {
+            string response = "";
+            if (resetPasswordDTO != null) {
+                var user = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Email == resetPasswordDTO.Email && x.Password == resetPasswordDTO.CurrentPassword);
+                if (user == null)
+                {
+                    response = "Invalid Password";
+                }
+                else
+                {
+                    if (resetPasswordDTO.NewPassword == resetPasswordDTO.ConfirmPassword)
+                    {
+                        user.Password = resetPasswordDTO.NewPassword;
+                        _icrSurveySurveyDBContext.Users.Update(user);
+                        await _icrSurveySurveyDBContext.SaveChangesAsync();
+                        response = "Password Changed Successfully.";
+                    }
+                    else
+                    {
+                        response = "New password and Confirmed Password are not Same";
+                    }
+                }
+            }
+            
+            return response;
         }
     }
 }

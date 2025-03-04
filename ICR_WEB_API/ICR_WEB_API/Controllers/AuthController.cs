@@ -1,5 +1,6 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.Entity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
@@ -35,7 +36,10 @@ namespace ICR_WEB_API.Controllers
         public async Task<IActionResult> RegisterUser([FromBody] User user)
         {
             var result = await _userRepo.SaveUser(user);
-
+            if (result == 3)
+            {
+                return BadRequest(new { message = "User already exists." });
+            }
             if (result <= 0)
             {
                 return BadRequest(new { message = "User registration failed" });
@@ -43,6 +47,15 @@ namespace ICR_WEB_API.Controllers
 
             return Ok(new { message = "User registered successfully", data = result });
         }
+        [Authorize]
+        [HttpPost("ForgetPassword")]
+        public async Task<IActionResult> ForgetPassword([FromBody]  ForgetPasswordDTO resetPasswordDTO)
+        {
+            var response = await _userRepo.ForgetPassword(resetPasswordDTO);
+            return Ok(response);
+
+        }
+     
 
     }
 }
