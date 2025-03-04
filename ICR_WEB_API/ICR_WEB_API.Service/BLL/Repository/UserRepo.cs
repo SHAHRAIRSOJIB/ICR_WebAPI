@@ -50,24 +50,21 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
         }
 
-        public async Task<string> Update(User entity)
+        public async Task<int> Update(User entity)
         {
             try
             {
-                string response = "";
-                var exist = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+                var exist = await _icrSurveySurveyDBContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
                 if (exist != null)
                 {
                     _icrSurveySurveyDBContext.Users.Update(entity);
-                    await _icrSurveySurveyDBContext.SaveChangesAsync();
-                    response = "Data Updated Successfully";
+                   var result = await _icrSurveySurveyDBContext.SaveChangesAsync();
+                    return result;
 
                 }
-                else
-                {
-                    response = "No Data Found.";
-                }
-                return response;
+                
+                return 0;
 
             }
             catch (Exception e)

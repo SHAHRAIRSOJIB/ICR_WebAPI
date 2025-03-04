@@ -29,7 +29,7 @@ namespace ICR_WEB_API.Controllers
         }
 
         [HttpPut]
-        public async Task<string> Update(User entity)
+        public async Task<int> Update(User entity)
         {
             return await _userRepo.Update(entity);
         }
