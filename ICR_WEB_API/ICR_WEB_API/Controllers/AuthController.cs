@@ -1,6 +1,5 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
-using ICR_WEB_API.Service.Entity;
-using Microsoft.AspNetCore.Authorization;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
@@ -33,29 +32,55 @@ namespace ICR_WEB_API.Controllers
             }
         }
         [HttpPost("RegisterUser")]
-        public async Task<IActionResult> RegisterUser([FromBody] User user)
+        public async Task<IActionResult> RegisterUser([FromBody] UserDTO entity)
         {
-            var result = await _userRepo.SaveUser(user);
-            if (result == 3)
+            if (entity == null)
             {
-                return BadRequest(new { message = "User already exists." });
-            }
-            if (result <= 0)
-            {
-                return BadRequest(new { message = "User registration failed" });
+                return BadRequest(new
+                {
+                    Message = "Invalid data"
+                });
             }
 
-            return Ok(new { message = "User registered successfully", data = result });
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.ValidationState);
+            }
+
+            var isExits = await _userRepo.IsExistByEmail(entity);
+
+            if (isExits)
+            {
+                return NotFound(new
+                {
+                    Message = "User already exists"
+                });
+            }
+
+            var saveUser = await _userRepo.SaveUser(entity);
+
+            if (saveUser == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Unsuccessful User Registration"
+                });
+            }
+
+            return Ok(saveUser);
         }
-        [Authorize]
-        [HttpPost("ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordDTO resetPasswordDTO)
-        {
-            var response = await _userRepo.ForgetPassword(resetPasswordDTO);
-            return Ok(response);
 
-        }
+        //[Authorize]
+        //[HttpPost("ForgetPassword")]
+        //public async Task<IActionResult> ForgetPassword([FromBody] ResetPasswordDTO resetPasswordDTO)
+        //{
+        //    if (!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState.ValidationState);
+        //    }
 
-
+        //    var response = await _userRepo.ResetPassword(resetPasswordDTO);
+        //    return Ok(response);
+        //}
     }
 }
