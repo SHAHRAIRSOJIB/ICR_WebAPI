@@ -13,6 +13,39 @@ namespace ICR_WEB_API.Service.BLL.Repository
         {
             _surveyDBContext = context;
         }
+
+        public async Task<QuestionDTO?> GetAsync(int id)
+        {
+            var question = await _surveyDBContext.Questions
+                    .Include(x => x.Options)
+                    .Include(x => x.RatingScaleItems)
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (question == null)
+                return null;
+
+            var questionDTO = new QuestionDTO
+            {
+                Id = question.Id,
+                Text = question.Text,
+                Type = question.Type,
+                SortOrder = question.SortOrder,
+                IsShowable = question.IsShowable,
+                Options = question.Options?.Select(o => new OptionDTO
+                {
+                    Id = o.Id,
+                    OptionText = o.OptionText
+                }).ToList(),
+                RatingScaleItems = question.RatingScaleItems?.Select(r => new RatingScaleItemDTO
+                {
+                    Id = r.Id,
+                    ItemText = r.ItemText
+                }).ToList()
+            };
+
+            return questionDTO;
+        }
+
         public async Task<List<QuestionDTO>> GetAll()
         {
             try
@@ -27,6 +60,8 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     Id = q.Id,
                     Text = q.Text,
                     Type = q.Type,
+                    SortOrder = q.SortOrder,
+                    IsShowable = q.IsShowable,
                     Options = q.Options?.Select(o => new OptionDTO
                     {
                         Id = o.Id,
