@@ -29,9 +29,37 @@ namespace ICR_WEB_API.Controllers
         }
 
         [HttpPut]
-        public async Task<int> Update(User entity)
+        public async Task<IActionResult> Update(User entity)
         {
-            return await _userRepo.Update(entity);
+            if (entity == null || entity.Id == 0)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid data"
+                });
+            }
+
+            var isExits = await _userRepo.IsExist(entity);
+
+            if (!isExits)
+            {
+                return NotFound(new
+                {
+                    Message = "User Not found"
+                });
+            }
+
+            var updatedUser = await _userRepo.Update(entity);
+
+            if (updatedUser == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Unsuccessful User Update"
+                });
+            }
+
+            return Ok(updatedUser);
         }
         [HttpPost("saveAdmin")]
         public async Task<int> SaveAdmin(User entity)
@@ -39,6 +67,7 @@ namespace ICR_WEB_API.Controllers
             return await _userRepo.SaveAdmin(entity);
         }
         [HttpPost("resetPassword")]
+        //[Authorize]
         public async Task<string> ResetPassword(ForgetPasswordDTO resetPasswordDTO)
         {
             return await _userRepo.ForgetPassword(resetPasswordDTO);

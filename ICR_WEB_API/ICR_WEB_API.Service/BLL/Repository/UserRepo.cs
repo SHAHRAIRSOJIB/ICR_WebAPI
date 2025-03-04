@@ -50,26 +50,21 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
         }
 
-        public async Task<int> Update(User entity)
+        public async Task<User?> Update(User entity)
         {
             try
             {
+                if (entity == null) return null;
 
-                var exist = await _icrSurveySurveyDBContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
-                if (exist != null)
-                {
-                    _icrSurveySurveyDBContext.Users.Update(entity);
-                    var result = await _icrSurveySurveyDBContext.SaveChangesAsync();
-                    return result;
+                var resultEntry = _icrSurveySurveyDBContext.Users.Update(entity);
+                await _icrSurveySurveyDBContext.SaveChangesAsync();
 
-                }
+                if (resultEntry.Entity == null || resultEntry.Entity.Id <= 0) return null;
 
-                return 0;
-
+                return resultEntry.Entity;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
                 throw;
             }
         }
@@ -88,9 +83,9 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 }
                 return res;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
 
         }
@@ -151,6 +146,13 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
 
             return response;
+        }
+
+        public async Task<bool> IsExist(User entity)
+        {
+            var result = await _icrSurveySurveyDBContext.Users.AsNoTracking().Where(x => x.Id == entity.Id).CountAsync();
+
+            return result > 0;
         }
     }
 }
