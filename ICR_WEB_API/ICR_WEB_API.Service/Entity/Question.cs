@@ -5,7 +5,9 @@ namespace ICR_WEB_API.Service.Entity
     public class Question
     {
         public int Id { get; set; }
-        public string Text { get; set; }
+        public required string Text { get; set; }
+        public bool IsShowable { get; set; }
+        public float SortOrder { get; set; }
         public QuestionType Type { get; set; }
 
         // Relationships (only populated based on question type)

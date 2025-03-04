@@ -15,11 +15,25 @@ namespace ICR_WEB_API.Controllers
         {
             _responseRepo = responseRepo;
         }
+
         [HttpGet]
-        public async Task<Response> GetResponseById(int id)
+        [Route("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var data = await _responseRepo.GetAll();
+            return Ok(data);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetResponseById(int id)
         {
             var data = await _responseRepo.GetById(id);
-            return data;
+            if (data != null && data.Id != 0)
+            {
+                return Ok(data);
+            }
+
+            return NotFound(new { message = "Data not found" });
         }
 
         [HttpPost]

@@ -12,6 +12,23 @@ namespace ICR_WEB_API.Service.BLL.Repository
         {
             _iCRSurveyDBContext = iCRSurveyDBContext;
         }
+
+        public async Task<List<Response>> GetAll()
+        {
+            try
+            {
+                var list = await _iCRSurveyDBContext.Responses
+                    .Include(x => x.Answers)
+                    .Include(x => x.User)
+                    .ToListAsync();
+                return list;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         public async Task<Response> GetById(int id)
         {
             var res = new Response();

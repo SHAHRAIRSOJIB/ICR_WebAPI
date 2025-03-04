@@ -1,45 +1,69 @@
 ﻿<h2>Create Question</h2>
 
 <form id="questionForm" class="row">
-	<div class="form-section col">
-		<label for="text" class="form-label">Question Text:</label><br>
-		<input type="text" id="text" name="text" class="form-control">
-	</div>
 
-	<div class="form-section col">
-		<label for="type" class="form-label">Question Type:</label><br>
-		<select id="type" name="type" class="form-control">
-			<option value="">Select Question Type</option>
-			<option value="0">Select</option>
-			<option value="1">Checkbox</option>
-			<option value="2">Rating</option>
-			<option value="3">Text</option>
-		</select>
+	<div class="row">
+		<div class="col">
+			<button type="button" onclick="submitForm()" class="btn btn-primary">Submit Question</button>
+		</div>
 	</div>
+	<div class="row">
+		<div class="form-section col">
+			<label for="text" class="form-label">Text:</label><br>
+			<input type="text" id="text" name="text" class="form-control form-text" required>
+		</div>
 
-	<div class="form-section col">
-		<label>Options:</label>
-		<button type="button" class="form-control" onclick="addOption()">+ Add Option</button>
-		<div id="optionsContainer">
-			<div class="option-item btn-group">
-				<input class="form-control" type="text" name="optionText[]" placeholder="Option Text">
-				<button type="button" class="remove-btn btn-close" onclick="removeItem(this)"></button>
-			</div>
+		<div class="form-section col">
+			<label for="sortOrder" class="form-label">Sort Order:</label><br>
+			<input type="text" id="sortOrder" name="sortOrder" class="form-control form-text" required>
+		</div>
+
+		<div class="form-section col">
+			<label for="type" class="form-label">Type:</label><br>
+			<select id="type" name="type" class="form-control" required>
+				<option value="">Select Type</option>
+				<option value="0">Select</option>
+				<option value="1">Checkbox</option>
+				<option value="2">Rating</option>
+				<option value="3">Text</option>
+			</select>
+		</div>
+
+		<div class="form-section col">
+			<label for="isShowable" class="form-label">Question Status:</label><br>
+			<input type="radio" id="showQuestion" name="isShowable" checked value="1" />
+			<label for="showQuestion" class="form-label">Show</label>
+
+			<input type="radio" id="hideQuestion" name="isShowable" value="0" />
+			<label for="hideQuestion" class="form-label">Hide</label>
 		</div>
 	</div>
 
-	<div class="form-section col">
-		<label class="form-label">Rating Scale Items:</label>
-		<button type="button" class="add-btn form-control" onclick="addRatingItem()">+ Add Rating Item</button>
-		<div id="ratingScaleContainer">
-			<div class="rating-item btn-group">
-				<input class="form-control" type="text" name="ratingItemText[]" placeholder="Rating Item Text">
-				<button class="remove-btn btn-close" type="button" onclick="removeItem(this)"></button>
+	<div class="row">
+		<div class="form-section col">
+			<label class="form-label">Options:</label>
+			<button type="button" class="btn btn-primary" onclick="addOption()">+ Add Option</button>
+			<br />
+			<div id="optionsContainer">
+				<div class="option-item btn-group">
+					<input class="form-control" type="text" name="optionText[]" placeholder="Option Text">
+					<button type="button" class="remove-btn btn btn-close btn-danger" onclick="removeItem(this)"></button>
+				</div>
+			</div>
+		</div>
+
+		<div class="form-section col">
+			<label class="form-label">Rating Scale Items:</label>
+			<button type="button" class="add-btn btn btn-primary" onclick="addRatingItem()">+ Add Rating Item</button>
+			<br />
+			<div id="ratingScaleContainer">
+				<div class="rating-item btn-group">
+					<input class="form-control" type="text" name="ratingItemText[]" placeholder="Rating Item Text">
+					<button class="remove-btn btn btn-close btn-danger" type="button" onclick="removeItem(this)"></button>
+				</div>
 			</div>
 		</div>
 	</div>
-
-	<button type="button" onclick="submitForm()" class="form-control">Submit Question</button>
 </form>
 
 @section Scripts {
@@ -50,7 +74,7 @@
 			$('#optionsContainer').append(`
 				<div class="option-item btn-group">
 					<input class="form-control" type="text" name="optionText[]" placeholder="Option Text">
-					<button type="button" class="remove-btn btn-close" onclick="removeItem(this)"></button>
+					<button type="button" class="remove-btn btn btn-close btn-danger" onclick="removeItem(this)"></button>
 				</div>
 			`);
 		}
@@ -60,7 +84,7 @@
 			$('#ratingScaleContainer').append(`
 				<div class="rating-item btn-group">
 					<input class="form-control" type="text" name="ratingItemText[]" placeholder="Rating Item Text">
-					<button type="button" class="remove-btn btn-close" onclick="removeItem(this)"></button>
+					<button type="button" class="remove-btn btn btn-close btn-danger" onclick="removeItem(this)"></button>
 				</div>
 			`);
 		}
@@ -75,6 +99,8 @@
 			const formData = {
 				text: $('#text').val(),
 				type: parseInt($('#type').val()),
+				sortOrder: parseFloat($('#sortOrder').val()),
+				isShowable: parseInt($('#isShowable').val()) ? true : false,
 				options: [],
 				ratingScaleItems: []
 			};
