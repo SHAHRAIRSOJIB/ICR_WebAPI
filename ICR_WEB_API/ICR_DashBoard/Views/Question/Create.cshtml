@@ -31,11 +31,10 @@
 
 		<div class="form-section col">
 			<label for="isShowable" class="form-label">Question Status:</label><br>
-			<input type="radio" id="showQuestion" name="isShowable" checked value="1" />
-			<label for="showQuestion" class="form-label">Show</label>
-
-			<input type="radio" id="hideQuestion" name="isShowable" value="0" />
-			<label for="hideQuestion" class="form-label">Hide</label>
+			<select id="isShowable" name="isShowable" class="form-control" required>
+				<option value="1">Show</option>
+				<option value="0">Hide</option>
+			</select>
 		</div>
 	</div>
 
@@ -67,83 +66,85 @@
 </form>
 
 @section Scripts {
-	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-	<script>
-		// Add dynamic option field
-		function addOption() {
-			$('#optionsContainer').append(`
-				<div class="option-item btn-group">
-					<input class="form-control" type="text" name="optionText[]" placeholder="Option Text">
-					<button type="button" class="remove-btn btn btn-close btn-danger" onclick="removeItem(this)"></button>
-				</div>
-			`);
-		}
+		<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+		<script>
+			// Add dynamic option field
+			function addOption() {
+				$('#optionsContainer').append(`
+					<div class="option-item btn-group">
+						<input class="form-control" type="text" name="optionText[]" placeholder="Option Text">
+						<button type="button" class="remove-btn btn btn-close btn-danger" onclick="removeItem(this)"></button>
+					</div>
+				`);
+			}
 
-		// Add dynamic rating scale item field
-		function addRatingItem() {
-			$('#ratingScaleContainer').append(`
-				<div class="rating-item btn-group">
-					<input class="form-control" type="text" name="ratingItemText[]" placeholder="Rating Item Text">
-					<button type="button" class="remove-btn btn btn-close btn-danger" onclick="removeItem(this)"></button>
-				</div>
-			`);
-		}
+			// Add dynamic rating scale item field
+			function addRatingItem() {
+				$('#ratingScaleContainer').append(`
+					<div class="rating-item btn-group">
+						<input class="form-control" type="text" name="ratingItemText[]" placeholder="Rating Item Text">
+						<button type="button" class="remove-btn btn btn-close btn-danger" onclick="removeItem(this)"></button>
+					</div>
+				`);
+			}
 
-		// Remove the parent element (option or rating item)
-		function removeItem(button) {
-			$(button).parent().remove();
-		}
+			// Remove the parent element (option or rating item)
+			function removeItem(button) {
+				$(button).parent().remove();
+			}
 
-		// Submit form using jQuery AJAX
-		function submitForm() {
-			const formData = {
-				text: $('#text').val(),
-				type: parseInt($('#type').val()),
-				sortOrder: parseFloat($('#sortOrder').val()),
-				isShowable: parseInt($('#isShowable').val()) ? true : false,
-				options: [],
-				ratingScaleItems: []
-			};
+			// Submit form using jQuery AJAX
+			function submitForm() {
+				const formData = {
+					text: $('#text').val(),
+					type: parseInt($('#type').val()),
+					sortOrder: parseFloat($('#sortOrder').val()),
+					isShowable: $('#isShowable').val() === "1" ? true : false,
+					options: [],
+					ratingScaleItems: []
+				};
 
-			// Collect options
-			$('[name="optionText[]"]').each(function () {
-				if ($(this).val().trim()) {
-					formData.options.push({ optionText: $(this).val().trim() });
-				}
-			});
+				console.log($("form"));
 
-			// Collect rating scale items
-			$('[name="ratingItemText[]"]').each(function () {
-				if ($(this).val().trim()) {
-					formData.ratingScaleItems.push({ itemText: $(this).val().trim() });
-				}
-			});
+				// Collect options
+				$('[name="optionText[]"]').each(function () {
+					if ($(this).val().trim()) {
+						formData.options.push({ optionText: $(this).val().trim() });
+					}
+				});
 
-			console.log('Submitting data:', JSON.stringify(formData, null, 2));
+				// Collect rating scale items
+				$('[name="ratingItemText[]"]').each(function () {
+					if ($(this).val().trim()) {
+						formData.ratingScaleItems.push({ itemText: $(this).val().trim() });
+					}
+				});
 
-			$.ajax({
-				url: '/Question/Create',  // <- Your backend endpoint
-				type: 'POST',
-				contentType: 'application/json',
-				data: JSON.stringify(formData),
-				success: function (response) {
-					Swal.fire({
-						title: 'Success!',
-						text: response.message || 'Question created successfully!',
-						icon: 'success',
-						confirmButtonText: 'OK'
-					}).then((result) => {
-						if (result.isConfirmed) {
-							location.reload();  // Page reload only if OK is pressed
-						}
-					});
-				},
-				error: function (xhr) {
-					const errorResponse = xhr.responseJSON || { message: 'An error occurred' };
-					alert('Error: ' + errorResponse.message);
-					console.error('Error response:', xhr);
-				}
-			});
-		}
-	</script>
+				console.log('Submitting data:', JSON.stringify(formData, null, 2));
+
+				$.ajax({
+					url: '/Question/Create',  // <- Your backend endpoint
+					type: 'POST',
+					contentType: 'application/json',
+					data: JSON.stringify(formData),
+					success: function (response) {
+						Swal.fire({
+							title: 'Success!',
+							text: response.message || 'Question created successfully!',
+							icon: 'success',
+							confirmButtonText: 'OK'
+						}).then((result) => {
+							if (result.isConfirmed) {
+								location.reload();  // Page reload only if OK is pressed
+							}
+						});
+					},
+					error: function (xhr) {
+						const errorResponse = xhr.responseJSON || { message: 'An error occurred' };
+						alert('Error: ' + errorResponse.message);
+						console.error('Error response:', xhr);
+					}
+				});
+			}
+		</script>
 }

@@ -25,6 +25,24 @@ namespace ICR_WEB_API.Controllers
             return list;
         }
 
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Get(int id)
+        {
+            if (id == 0)
+            {
+                return BadRequest(new { Message = "Inavlid Id" });
+            }
+
+            var question = await _questionRepo.GetAsync(id);
+
+            if (question == null)
+            {
+                return NotFound(new { Message = "Question not found" });
+            }
+
+            return Ok(question);
+        }
+
         [HttpPost]
         public async Task<int> Save(Question entity)
         {
@@ -36,7 +54,5 @@ namespace ICR_WEB_API.Controllers
         {
             return await _questionRepo.Update(entity);
         }
-
-
     }
 }
