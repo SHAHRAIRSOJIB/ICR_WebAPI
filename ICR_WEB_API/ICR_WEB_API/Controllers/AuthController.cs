@@ -49,13 +49,13 @@ namespace ICR_WEB_API.Controllers
         }
         [Authorize]
         [HttpPost("ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword([FromBody]  ForgetPasswordDTO resetPasswordDTO)
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordDTO resetPasswordDTO)
         {
             var response = await _userRepo.ForgetPassword(resetPasswordDTO);
             return Ok(response);
 
         }
-     
+
 
     }
 }

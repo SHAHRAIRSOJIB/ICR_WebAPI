@@ -1,6 +1,4 @@
-﻿using ICR_WEB_API.Service.Entity;
-
-namespace ICR_WEB_API.Service.Model.DTOs
+﻿namespace ICR_WEB_API.Service.Model.DTOs
 {
     public class AnswerDTO
     {

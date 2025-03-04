@@ -28,7 +28,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
             try
             {
                 int res = 0;
-                
+
                 if (entity != null)
                 {
                     var userExistance = await _icrSurveySurveyDBContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == entity.Email);
@@ -59,11 +59,11 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 if (exist != null)
                 {
                     _icrSurveySurveyDBContext.Users.Update(entity);
-                   var result = await _icrSurveySurveyDBContext.SaveChangesAsync();
+                    var result = await _icrSurveySurveyDBContext.SaveChangesAsync();
                     return result;
 
                 }
-                
+
                 return 0;
 
             }
@@ -127,7 +127,8 @@ namespace ICR_WEB_API.Service.BLL.Repository
         public async Task<string> ForgetPassword(ForgetPasswordDTO resetPasswordDTO)
         {
             string response = "";
-            if (resetPasswordDTO != null) {
+            if (resetPasswordDTO != null)
+            {
                 var user = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Email == resetPasswordDTO.Email && x.Password == resetPasswordDTO.CurrentPassword);
                 if (user == null)
                 {
@@ -148,7 +149,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     }
                 }
             }
-            
+
             return response;
         }
     }
