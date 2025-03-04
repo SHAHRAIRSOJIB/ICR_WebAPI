@@ -91,6 +91,12 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsShowable")
+                        .HasColumnType("bit");
+
+                    b.Property<float>("SortOrder")
+                        .HasColumnType("real");
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -137,9 +143,20 @@ namespace ICR_WEB_API.Service.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("DistrictName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("FullAddress")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageBase64")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsSubmited")
+                        .HasColumnType("bit");
 
                     b.Property<string>("LicenseIssueDateLabel")
                         .IsRequired()
@@ -158,6 +175,10 @@ namespace ICR_WEB_API.Service.Model.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ShopName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StreetName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

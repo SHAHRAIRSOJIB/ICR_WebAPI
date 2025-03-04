@@ -1,6 +1,6 @@
+using System.Diagnostics;
 using ICR_DashBoard.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace ICR_DashBoard.Controllers
 {

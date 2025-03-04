@@ -1,16 +1,15 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace ICR_DashBoard.Controllers
 {
     public class LoginController : Controller
     {
         private readonly IUserRepo _userRepo;
-        public LoginController(IUserRepo userRepo) 
+        public LoginController(IUserRepo userRepo)
         {
-         _userRepo = userRepo;
-        }    
+            _userRepo = userRepo;
+        }
         public IActionResult Index()
         {
             return View();
@@ -28,7 +27,7 @@ namespace ICR_DashBoard.Controllers
 
             if (response != null)
             {
-                return RedirectToAction("Index", "Home"); // Login successful
+                return RedirectToAction("Create", "Question"); // Login successful
             }
             else
             {
@@ -36,6 +35,5 @@ namespace ICR_DashBoard.Controllers
                 return View("Index");  // Stay on login page and show message
             }
         }
-
     }
 }

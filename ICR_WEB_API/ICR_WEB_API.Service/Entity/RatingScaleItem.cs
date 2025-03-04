@@ -3,7 +3,7 @@
     public class RatingScaleItem
     {
         public int Id { get; set; }
-        public string ItemText { get; set; }
+        public required string ItemText { get; set; }
 
         public int QuestionId { get; set; }
         public virtual Question? Question { get; set; }

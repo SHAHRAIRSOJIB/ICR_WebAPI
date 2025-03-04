@@ -1,12 +1,11 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
 namespace ICR_WEB_API.Service.Model.Migrations
 {
     /// <inheritdoc />
-    public partial class initDb : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -18,6 +17,8 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsShowable = table.Column<bool>(type: "bit", nullable: false),
+                    SortOrder = table.Column<float>(type: "real", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -90,12 +91,16 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     SubmissionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ShopName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OwnerName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DistrictName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StreetName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UnifiedLicenseNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LicenseIssueDateLabel = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     OwnerIDNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AIESECActivity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Municipality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ImageBase64 = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsSubmited = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
