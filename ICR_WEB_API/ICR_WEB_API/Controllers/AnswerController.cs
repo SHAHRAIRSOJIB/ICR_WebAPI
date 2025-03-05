@@ -24,7 +24,7 @@ namespace ICR_WEB_API.Controllers
             return list;
         }
 
-        [HttpPost]
+        [HttpPost("Update")]
         public async Task<int> Save(List<Answer> entities)
         {
             return await _answerRepo.Save(entities);

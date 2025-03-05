@@ -1,6 +1,7 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.EntityFrameworkCore;
 
 namespace ICR_WEB_API.Service.BLL.Repository
@@ -29,30 +30,81 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
-        public async Task<Response> GetById(int id)
-        {
-            var res = new Response();
-            res = await _iCRSurveyDBContext.Responses.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
-
-            return res != null ? res : new Response();
-        }
-
-        public async Task<int> Save(Response entity)
+        public async Task<ResponseDTO?> GetById(int id)
         {
             try
             {
-                int res = 0;
-                if (entity != null)
-                {
-                    var resDB = await _iCRSurveyDBContext.Responses.AddAsync(entity);
-                    res = await _iCRSurveyDBContext.SaveChangesAsync();
-                    return res > 0 ? res = entity.Id : 0;
-                }
+                var res = new ResponseDTO();
+                res = await _iCRSurveyDBContext.Responses
+                    .AsNoTracking()
+                    .Where(x => x.Id == id)
+                    .Select(x => new ResponseDTO
+                    {
+                        Id = x.Id,
+                        SubmissionDate = x.SubmissionDate,
+                        ShopName = x.ShopName,
+                        OwnerName = x.OwnerName,
+                        DistrictName = x.DistrictName,
+                        StreetName = x.StreetName,
+                        UnifiedLicenseNumber = x.UnifiedLicenseNumber,
+                        LicenseIssueDateLabel = x.LicenseIssueDateLabel,
+                        OwnerIDNumber = x.OwnerIDNumber,
+                        AIESECActivity = x.AIESECActivity,
+                        Municipality = x.Municipality,
+                        FullAddress = x.FullAddress,
+                        IsSubmited = x.IsSubmited,
+                        UserId = x.UserId
+                    }).SingleOrDefaultAsync();
+
                 return res;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
+            }
+        }
+
+        public async Task<bool> IsExist(Response entity)
+        {
+            var result = await _iCRSurveyDBContext.Responses.AsNoTracking()
+                .Where(x => x.OwnerIDNumber == entity.OwnerIDNumber && x.UnifiedLicenseNumber == entity.UnifiedLicenseNumber)
+                .CountAsync();
+
+            return result > 0;
+        }
+
+        public async Task<ResponseDTO?> Save(Response entity)
+        {
+            try
+            {
+                if (entity == null) return null;
+
+                var resultEntry = await _iCRSurveyDBContext.Responses.AddAsync(entity);
+                await _iCRSurveyDBContext.SaveChangesAsync();
+
+                if (resultEntry.Entity == null || resultEntry.Entity.Id <= 0) return null;
+
+                return new ResponseDTO()
+                {
+                    Id = resultEntry.Entity.Id,
+                    SubmissionDate = resultEntry.Entity.SubmissionDate,
+                    ShopName = resultEntry.Entity.ShopName,
+                    OwnerName = resultEntry.Entity.OwnerName,
+                    DistrictName = resultEntry.Entity.DistrictName,
+                    StreetName = resultEntry.Entity.StreetName,
+                    UnifiedLicenseNumber = resultEntry.Entity.UnifiedLicenseNumber,
+                    LicenseIssueDateLabel = resultEntry.Entity.LicenseIssueDateLabel,
+                    OwnerIDNumber = resultEntry.Entity.OwnerIDNumber,
+                    AIESECActivity = resultEntry.Entity.AIESECActivity,
+                    Municipality = resultEntry.Entity.Municipality,
+                    FullAddress = resultEntry.Entity.FullAddress,
+                    IsSubmited = resultEntry.Entity.IsSubmited,
+                    UserId = resultEntry.Entity.UserId,
+                };
+            }
+            catch (Exception)
+            {
+                throw;
             }
 
         }

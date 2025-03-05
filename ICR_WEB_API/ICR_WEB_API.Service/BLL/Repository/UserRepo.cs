@@ -3,6 +3,7 @@ using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
 using ICR_WEB_API.Service.Enum;
 using ICR_WEB_API.Service.Model;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -23,53 +24,50 @@ namespace ICR_WEB_API.Service.BLL.Repository
             return list;
         }
 
-        public async Task<int> SaveUser(User entity)
+        public async Task<User?> SaveUser(UserDTO entity)
         {
             try
             {
-                int res = 0;
-                
-                if (entity != null)
-                {
-                    var userExistance = await _icrSurveySurveyDBContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Email == entity.Email);
-                    if (userExistance != null)
-                    {
-                        return res = 3;
-                    }
-                    entity.UserType = EnumCollection.UserType.User;
-                    await _icrSurveySurveyDBContext.Users.AddAsync(entity);
-                    await _icrSurveySurveyDBContext.SaveChangesAsync();
-                    res = entity.Id;
-                }
-                return res;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+                if (entity == null) return null;
 
+                entity.UserType = EnumCollection.UserType.User;
+
+                var user = new User()
+                {
+                    Name = entity.Name,
+                    Email = entity.Email,
+                    Password = entity.Password,
+                    UserType = entity.UserType
+                };
+
+                var resultEntry = await _icrSurveySurveyDBContext.Users.AddAsync(user);
+                await _icrSurveySurveyDBContext.SaveChangesAsync();
+
+                if (resultEntry.Entity == null || resultEntry.Entity.Id <= 0) return null;
+
+                return resultEntry.Entity;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
-        public async Task<int> Update(User entity)
+        public async Task<User?> Update(User entity)
         {
             try
             {
+                if (entity == null) return null;
 
-                var exist = await _icrSurveySurveyDBContext.Users.AsNoTracking().FirstOrDefaultAsync(x => x.Id == entity.Id);
-                if (exist != null)
-                {
-                    _icrSurveySurveyDBContext.Users.Update(entity);
-                   var result = await _icrSurveySurveyDBContext.SaveChangesAsync();
-                    return result;
+                var resultEntry = _icrSurveySurveyDBContext.Users.Update(entity);
+                await _icrSurveySurveyDBContext.SaveChangesAsync();
 
-                }
-                
-                return 0;
+                if (resultEntry.Entity == null || resultEntry.Entity.Id <= 0) return null;
 
+                return resultEntry.Entity;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e);
                 throw;
             }
         }
@@ -88,9 +86,9 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 }
                 return res;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
 
         }
@@ -124,32 +122,47 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
         }
 
-        public async Task<string> ForgetPassword(ForgetPasswordDTO resetPasswordDTO)
+        public async Task<User?> ResetPassword(ResetPasswordDTO resetPasswordDTO)
         {
-            string response = "";
-            if (resetPasswordDTO != null) {
-                var user = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Email == resetPasswordDTO.Email && x.Password == resetPasswordDTO.CurrentPassword);
+            try
+            {
+                if (resetPasswordDTO == null) return null;
+
+                var user = await _icrSurveySurveyDBContext.Users
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(x => x.Email == resetPasswordDTO.Email && x.Password == resetPasswordDTO.CurrentPassword);
+
                 if (user == null)
                 {
-                    response = "Invalid Password";
+                    return null;
                 }
-                else
-                {
-                    if (resetPasswordDTO.NewPassword == resetPasswordDTO.ConfirmPassword)
-                    {
-                        user.Password = resetPasswordDTO.NewPassword;
-                        _icrSurveySurveyDBContext.Users.Update(user);
-                        await _icrSurveySurveyDBContext.SaveChangesAsync();
-                        response = "Password Changed Successfully.";
-                    }
-                    else
-                    {
-                        response = "New password and Confirmed Password are not Same";
-                    }
-                }
+
+                user.Password = resetPasswordDTO.NewPassword;
+                var resultEntry = _icrSurveySurveyDBContext.Users.Update(user);
+                await _icrSurveySurveyDBContext.SaveChangesAsync();
+
+                if (resultEntry.Entity == null || resultEntry.Entity.Id <= 0) return null;
+
+                return resultEntry.Entity;
             }
-            
-            return response;
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public async Task<bool> IsExistById(User entity)
+        {
+            var result = await _icrSurveySurveyDBContext.Users.AsNoTracking().Where(x => x.Id == entity.Id).CountAsync();
+
+            return result > 0;
+        }
+
+        public async Task<bool> IsExistByEmail(UserDTO entity)
+        {
+            var result = await _icrSurveySurveyDBContext.Users.AsNoTracking().Where(x => x.Email == entity.Email).CountAsync();
+
+            return result > 0;
         }
     }
 }

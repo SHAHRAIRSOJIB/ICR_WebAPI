@@ -49,7 +49,7 @@ namespace ICR_WEB_API.Controllers
             return await _questionRepo.Save(entity);
         }
 
-        [HttpPut]
+        [HttpPost("Update")]
         public async Task<string> Update(Question entity)
         {
             return await _questionRepo.Update(entity);
