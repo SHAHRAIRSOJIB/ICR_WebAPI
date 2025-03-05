@@ -79,17 +79,25 @@ namespace ICR_WEB_API.Service.BLL.Repository
             try
             {
                 int res = 0;
-                if (entities != null)
+                if (entities != null && entities.Count > 0)
                 {
                     await _icrSurveySurveyDBContext.Answers.AddRangeAsync(entities);
+
+                    var r = await _icrSurveySurveyDBContext.Responses.FirstOrDefaultAsync(x => x.Id == entities.First().ResponseId);
+
+                    if (r == null) return 0;
+
+                    r.IsSubmited = true;
+                    _icrSurveySurveyDBContext.Responses.Update(r);
+
                     var resDB = await _icrSurveySurveyDBContext.SaveChangesAsync();
                     return resDB > 0 ? res = resDB : 0;
                 }
                 return res;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                throw ex;
+                throw;
             }
 
         }

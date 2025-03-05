@@ -67,7 +67,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
         public async Task<bool> IsExist(Response entity)
         {
             var result = await _iCRSurveyDBContext.Responses.AsNoTracking()
-                .Where(x => x.OwnerIDNumber == entity.OwnerIDNumber && x.UnifiedLicenseNumber == entity.UnifiedLicenseNumber)
+                .Where(x => x.OwnerIDNumber == entity.OwnerIDNumber && x.UnifiedLicenseNumber == entity.UnifiedLicenseNumber && x.IsSubmited == true)
                 .CountAsync();
 
             return result > 0;
