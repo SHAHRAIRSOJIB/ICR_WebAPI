@@ -63,7 +63,7 @@ namespace ICR_WEB_API.Controllers
             return Ok(saveUser);
         }
 
-        [HttpPut]
+        [HttpPost("Update")]
         [Authorize]
         public async Task<IActionResult> Update(User entity)
         {
