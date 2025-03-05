@@ -39,7 +39,7 @@ namespace ICR_WEB_API.Controllers
         [HttpPost]
         public async Task<IActionResult> Save(Response entity)
         {
-            if (entity == null || entity.Id == 0)
+            if (entity == null)
             {
                 return BadRequest(new
                 {
