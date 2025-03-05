@@ -24,13 +24,13 @@ namespace ICR_WEB_API.Controllers
             return list;
         }
 
-        [HttpPost("Update")]
+        [HttpPost]
         public async Task<int> Save(List<Answer> entities)
         {
             return await _answerRepo.Save(entities);
         }
 
-        [HttpPut]
+        [HttpPost("Update")]
         public async Task<string> Update(Answer entity)
         {
             return await _answerRepo.Update(entity);

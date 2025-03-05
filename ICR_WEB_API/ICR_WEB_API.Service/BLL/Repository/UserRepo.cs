@@ -53,13 +53,20 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
-        public async Task<User?> Update(User entity)
+        public async Task<User?> Update(UserUpdateDTO entity)
         {
             try
             {
                 if (entity == null) return null;
 
-                var resultEntry = _icrSurveySurveyDBContext.Users.Update(entity);
+                var user = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Id == entity.Id);
+
+                if (user == null) return null;
+
+                user.Name = entity.Name;
+                user.Email = entity.Email;
+
+                var resultEntry = _icrSurveySurveyDBContext.Users.Update(user);
                 await _icrSurveySurveyDBContext.SaveChangesAsync();
 
                 if (resultEntry.Entity == null || resultEntry.Entity.Id <= 0) return null;
@@ -151,18 +158,28 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
-        public async Task<bool> IsExistById(User entity)
+        public async Task<bool> IsExistById(int id)
         {
-            var result = await _icrSurveySurveyDBContext.Users.AsNoTracking().Where(x => x.Id == entity.Id).CountAsync();
+            var result = await _icrSurveySurveyDBContext.Users.AsNoTracking().Where(x => x.Id == id).CountAsync();
 
             return result > 0;
         }
 
-        public async Task<bool> IsExistByEmail(UserDTO entity)
+        public async Task<bool> IsExistByEmail(string email)
         {
-            var result = await _icrSurveySurveyDBContext.Users.AsNoTracking().Where(x => x.Email == entity.Email).CountAsync();
+            var result = await _icrSurveySurveyDBContext.Users.AsNoTracking().Where(x => x.Email == email).CountAsync();
 
             return result > 0;
+        }
+
+        public async Task<User?> GetById(int id)
+        {
+            return await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task<User?> GetByEmail(string email)
+        {
+            return await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }
