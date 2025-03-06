@@ -17,6 +17,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
         {
             _icrSurveySurveyDBContext = icrSurveyDbContext;
         }
+
         public async Task<List<User>> GetAll()
         {
             var list = new List<User>();
@@ -30,7 +31,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
             {
                 if (entity == null) return null;
 
-                entity.UserType = EnumCollection.UserType.User;
+                entity.UserType = UserType.User;
 
                 var user = new User()
                 {
@@ -86,7 +87,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 int res = 0;
                 if (entity != null)
                 {
-                    entity.UserType = EnumCollection.UserType.Admin;
+                    entity.UserType = UserType.Admin;
                     await _icrSurveySurveyDBContext.Users.AddAsync(entity);
                     await _icrSurveySurveyDBContext.SaveChangesAsync();
                     res = entity.Id;
@@ -107,8 +108,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 LoginResponse LoginResponse = new LoginResponse();
                 if (!userName.IsNullOrEmpty() && !password.IsNullOrEmpty())
                 {
-                    var user = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x =>
-                        x.Email == userName && x.Password == password);
+                    var user = await _icrSurveySurveyDBContext.Users.FirstOrDefaultAsync(x => x.Email == userName && x.Password == password);
                     if (user != null)
                     {
                         LoginResponse.Email = user.Email;

@@ -8,7 +8,7 @@ namespace ICR_WEB_API.Service.Model
         public string Name { get; set; }
         public string Email { get; set; }
 
-        public EnumCollection.UserType? UserType;
+        public UserType? UserType;
         public string Token { get; set; }
     }
 }

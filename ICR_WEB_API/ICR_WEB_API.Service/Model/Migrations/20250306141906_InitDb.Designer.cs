@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ICR_WEB_API.Service.Model.Migrations
 {
     [DbContext(typeof(ICRSurveyDBContext))]
-    [Migration("20250304160512_responsenullableadded")]
-    partial class responsenullableadded
+    [Migration("20250306141906_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -39,8 +39,8 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     b.Property<int?>("RatingItemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RatingValue")
-                        .HasColumnType("int");
+                    b.Property<string>("RatingValue")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ResponseId")
                         .HasColumnType("int");
@@ -154,7 +154,11 @@ namespace ICR_WEB_API.Service.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSubmited")
+                    b.Property<string>("ImageLicensePlate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAnswerSubmitted")
                         .HasColumnType("bit");
 
                     b.Property<string>("LicenseIssueDateLabel")
@@ -190,10 +194,6 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
-
-                    b.Property<string>("imageBase64")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

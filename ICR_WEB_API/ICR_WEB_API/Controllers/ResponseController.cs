@@ -1,5 +1,6 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.Entity;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -21,7 +22,10 @@ namespace ICR_WEB_API.Controllers
         public async Task<IActionResult> GetAll()
         {
             var data = await _responseRepo.GetAll();
-            return Ok(data);
+            if (data.Count > 0)
+                return Ok(data);
+            else
+                return NotFound(new { message = "No Response Data found" });
         }
 
         [HttpGet("{id}")]
@@ -36,10 +40,10 @@ namespace ICR_WEB_API.Controllers
             return NotFound(new { message = "Data not found" });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Save(Response entity)
+        [HttpPost("UpdateStatus")]
+        public async Task<IActionResult> UpdateStatus(ResponseUpdateStatusDTO entity)
         {
-            if (entity == null || entity.UserId == 0)
+            if (entity == null)
             {
                 return BadRequest(new
                 {
@@ -47,13 +51,65 @@ namespace ICR_WEB_API.Controllers
                 });
             }
 
-            bool isExist = await _responseRepo.IsExist(entity);
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState.ValidationState);
+            }
 
-            if (isExist)
+            var response = await _responseRepo.GetByUnifiedLicenseNumberAndOwnerIDNumber(entity.UnifiedLicenseNumber, entity.OwnerIDNumber);
+
+            if (response == null)
+            {
+                return NotFound(new
+                {
+                    Message = "User response not exist"
+                });
+            }
+
+            var updatedResponse = await _responseRepo.UpdateStatus(entity.UnifiedLicenseNumber, entity.OwnerIDNumber, entity.IsAnswerSubmitted);
+
+            if (updatedResponse == null)
             {
                 return BadRequest(new
                 {
-                    Message = "Already exist"
+                    Message = "Unsuccessful response status update"
+                });
+            }
+
+            return Ok(new
+            {
+                Message = "Successful response status update",
+                Response = updatedResponse
+            }
+            );
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Save(Response entity)
+        {
+            if (entity == null || entity.UserId <= 0)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid data"
+                });
+            }
+
+            var response = await _responseRepo.GetByUnifiedLicenseNumberAndOwnerIDNumber(entity.UnifiedLicenseNumber, entity.OwnerIDNumber);
+
+            if (response != null && response.IsAnswerSubmitted == false)
+            {
+                return Ok(new
+                {
+                    Message = "Already exist but answers not submitted",
+                    Response = response
+                });
+            }
+            else if (response != null && response.IsAnswerSubmitted == true)
+            {
+                return BadRequest(new
+                {
+                    Message = "Already submitted"
                 });
             }
 

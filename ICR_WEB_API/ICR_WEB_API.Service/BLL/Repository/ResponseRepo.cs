@@ -52,7 +52,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                         AIESECActivity = x.AIESECActivity,
                         Municipality = x.Municipality,
                         FullAddress = x.FullAddress,
-                        IsSubmited = x.IsSubmited,
+                        IsAnswerSubmitted = x.IsAnswerSubmitted,
                         UserId = x.UserId
                     }).SingleOrDefaultAsync();
 
@@ -64,13 +64,45 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
-        public async Task<bool> IsExist(Response entity)
+        public async Task<bool> IsExist(string unifiedLicenseNumber, string ownerIDNumber)
         {
             var result = await _iCRSurveyDBContext.Responses.AsNoTracking()
-                .Where(x => x.OwnerIDNumber == entity.OwnerIDNumber && x.UnifiedLicenseNumber == entity.UnifiedLicenseNumber && x.IsSubmited == true)
-                .CountAsync();
-
+                .Where(x => x.OwnerIDNumber == ownerIDNumber && x.UnifiedLicenseNumber == unifiedLicenseNumber).CountAsync();
             return result > 0;
+        }
+
+        public async Task<ResponseDTO?> GetByUnifiedLicenseNumberAndOwnerIDNumber(string unifiedLicenseNumber, string ownerIDNumber)
+        {
+            try
+            {
+                var res = new ResponseDTO();
+                res = await _iCRSurveyDBContext.Responses
+                    .AsNoTracking()
+                    .Where(x => x.UnifiedLicenseNumber == unifiedLicenseNumber && x.OwnerIDNumber == ownerIDNumber)
+                    .Select(x => new ResponseDTO
+                    {
+                        Id = x.Id,
+                        SubmissionDate = x.SubmissionDate,
+                        ShopName = x.ShopName,
+                        OwnerName = x.OwnerName,
+                        DistrictName = x.DistrictName,
+                        StreetName = x.StreetName,
+                        UnifiedLicenseNumber = x.UnifiedLicenseNumber,
+                        LicenseIssueDateLabel = x.LicenseIssueDateLabel,
+                        OwnerIDNumber = x.OwnerIDNumber,
+                        AIESECActivity = x.AIESECActivity,
+                        Municipality = x.Municipality,
+                        FullAddress = x.FullAddress,
+                        IsAnswerSubmitted = x.IsAnswerSubmitted,
+                        UserId = x.UserId
+                    }).SingleOrDefaultAsync();
+
+                return res ?? null;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public async Task<ResponseDTO?> Save(Response entity)
@@ -98,7 +130,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     AIESECActivity = resultEntry.Entity.AIESECActivity,
                     Municipality = resultEntry.Entity.Municipality,
                     FullAddress = resultEntry.Entity.FullAddress,
-                    IsSubmited = resultEntry.Entity.IsSubmited,
+                    IsAnswerSubmitted = resultEntry.Entity.IsAnswerSubmitted,
                     UserId = resultEntry.Entity.UserId,
                 };
             }
@@ -106,7 +138,49 @@ namespace ICR_WEB_API.Service.BLL.Repository
             {
                 throw;
             }
+        }
 
+        public async Task<ResponseDTO?> UpdateStatus(string unifiedLicenseNumber, string ownerIDNumber, bool status = false)
+        {
+            try
+            {
+                var isExist = await IsExist(unifiedLicenseNumber, ownerIDNumber);
+
+                if (!isExist) return null;
+
+                var response = await _iCRSurveyDBContext.Responses.Where(x => x.UnifiedLicenseNumber == unifiedLicenseNumber && x.OwnerIDNumber == ownerIDNumber).FirstOrDefaultAsync();
+
+                if (response == null) return null;
+
+                response.IsAnswerSubmitted = status;
+
+                var resultEntry = _iCRSurveyDBContext.Responses.Update(response);
+                await _iCRSurveyDBContext.SaveChangesAsync();
+
+                if (resultEntry.Entity == null || resultEntry.Entity.Id <= 0) return null;
+
+                return new ResponseDTO()
+                {
+                    Id = resultEntry.Entity.Id,
+                    SubmissionDate = resultEntry.Entity.SubmissionDate,
+                    ShopName = resultEntry.Entity.ShopName,
+                    OwnerName = resultEntry.Entity.OwnerName,
+                    DistrictName = resultEntry.Entity.DistrictName,
+                    StreetName = resultEntry.Entity.StreetName,
+                    UnifiedLicenseNumber = resultEntry.Entity.UnifiedLicenseNumber,
+                    LicenseIssueDateLabel = resultEntry.Entity.LicenseIssueDateLabel,
+                    OwnerIDNumber = resultEntry.Entity.OwnerIDNumber,
+                    AIESECActivity = resultEntry.Entity.AIESECActivity,
+                    Municipality = resultEntry.Entity.Municipality,
+                    FullAddress = resultEntry.Entity.FullAddress,
+                    IsAnswerSubmitted = resultEntry.Entity.IsAnswerSubmitted,
+                    UserId = resultEntry.Entity.UserId,
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }

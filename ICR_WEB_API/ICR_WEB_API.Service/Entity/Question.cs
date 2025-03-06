@@ -1,4 +1,4 @@
-﻿using static ICR_WEB_API.Service.Enum.EnumCollection;
+﻿using ICR_WEB_API.Service.Enum;
 
 namespace ICR_WEB_API.Service.Entity
 {

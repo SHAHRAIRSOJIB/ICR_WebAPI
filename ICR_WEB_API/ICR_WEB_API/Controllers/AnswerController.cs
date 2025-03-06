@@ -18,7 +18,7 @@ namespace ICR_WEB_API.Controllers
             _answerRepo = answerRepo;
         }
         [HttpGet]
-        public async Task<List<AnswerDTO>> GetAllQuestion()
+        public async Task<List<AnswerDTO>> GetAllAnswers()
         {
             var list = await _answerRepo.GetAll();
             return list;
@@ -27,14 +27,15 @@ namespace ICR_WEB_API.Controllers
         [HttpPost]
         public async Task<IActionResult> Save(List<Answer> entities)
         {
-            if (entities == null) {
+            if (entities == null || entities.Count <= 0)
+            {
                 return BadRequest(new
                 {
                     Message = "Invalid data"
                 });
             }
 
-            if(await _answerRepo.Save(entities) > 0)
+            if (await _answerRepo.Save(entities) > 0)
                 return Ok(new
                 {
                     Message = "Successful Submit answers"
@@ -43,7 +44,7 @@ namespace ICR_WEB_API.Controllers
                 return BadRequest(new
                 {
                     Message = "Unsuccessful Submit answers"
-                }); ;
+                });
         }
 
         [HttpPost("Update")]

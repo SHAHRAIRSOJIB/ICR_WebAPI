@@ -83,12 +83,12 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 {
                     await _icrSurveySurveyDBContext.Answers.AddRangeAsync(entities);
 
-                    var r = await _icrSurveySurveyDBContext.Responses.FirstOrDefaultAsync(x => x.Id == entities.First().ResponseId);
+                    //var r = await _icrSurveySurveyDBContext.Responses.FirstOrDefaultAsync(x => x.Id == entities.First().ResponseId);
 
-                    if (r == null) return 0;
+                    //if (r == null) return 0;
 
-                    r.IsSubmited = true;
-                    _icrSurveySurveyDBContext.Responses.Update(r);
+                    //r.IsSubmitted = true;
+                    //_icrSurveySurveyDBContext.Responses.Update(r);
 
                     var resDB = await _icrSurveySurveyDBContext.SaveChangesAsync();
                     return resDB > 0 ? res = resDB : 0;
