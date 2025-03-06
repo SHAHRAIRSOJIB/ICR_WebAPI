@@ -13,7 +13,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE TABLE [Questions] (
@@ -29,7 +29,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE TABLE [Users] (
@@ -45,7 +45,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE TABLE [Options] (
@@ -60,7 +60,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE TABLE [RatingScaleItems] (
@@ -75,7 +75,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE TABLE [Responses] (
@@ -91,8 +91,8 @@ BEGIN
         [AIESECActivity] nvarchar(max) NOT NULL,
         [Municipality] nvarchar(max) NOT NULL,
         [FullAddress] nvarchar(max) NOT NULL,
-        [ImageBase64] nvarchar(max) NOT NULL,
-        [IsSubmited] bit NOT NULL,
+        [ImageLicensePlate] nvarchar(max) NOT NULL,
+        [IsAnswerSubmitted] bit NOT NULL,
         [UserId] int NOT NULL,
         CONSTRAINT [PK_Responses] PRIMARY KEY ([Id]),
         CONSTRAINT [FK_Responses_Users_UserId] FOREIGN KEY ([UserId]) REFERENCES [Users] ([Id]) ON DELETE CASCADE
@@ -102,7 +102,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE TABLE [Answers] (
@@ -111,7 +111,7 @@ BEGIN
         [QuestionId] int NOT NULL,
         [SelectedOptionId] int NULL,
         [RatingItemId] int NULL,
-        [RatingValue] int NULL,
+        [RatingValue] nvarchar(max) NULL,
         [TextResponse] nvarchar(max) NULL,
         CONSTRAINT [PK_Answers] PRIMARY KEY ([Id]),
         CONSTRAINT [FK_Answers_Options_SelectedOptionId] FOREIGN KEY ([SelectedOptionId]) REFERENCES [Options] ([Id]),
@@ -124,7 +124,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE INDEX [IX_Answers_QuestionId] ON [Answers] ([QuestionId]);
@@ -133,7 +133,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE INDEX [IX_Answers_RatingItemId] ON [Answers] ([RatingItemId]);
@@ -142,7 +142,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE INDEX [IX_Answers_ResponseId] ON [Answers] ([ResponseId]);
@@ -151,7 +151,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE INDEX [IX_Answers_SelectedOptionId] ON [Answers] ([SelectedOptionId]);
@@ -160,7 +160,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE INDEX [IX_Options_QuestionId] ON [Options] ([QuestionId]);
@@ -169,7 +169,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE INDEX [IX_RatingScaleItems_QuestionId] ON [RatingScaleItems] ([QuestionId]);
@@ -178,7 +178,7 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     CREATE INDEX [IX_Responses_UserId] ON [Responses] ([UserId]);
@@ -187,52 +187,11 @@ GO
 
 IF NOT EXISTS (
     SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250303222112_InitDb'
+    WHERE [MigrationId] = N'20250306141906_InitDb'
 )
 BEGIN
     INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-    VALUES (N'20250303222112_InitDb', N'8.0.0');
-END;
-GO
-
-COMMIT;
-GO
-
-BEGIN TRANSACTION;
-GO
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250304070700_fromAIUB'
-)
-BEGIN
-    EXEC sp_rename N'[Responses].[ImageBase64]', N'imageBase64', N'COLUMN';
-END;
-GO
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250304070700_fromAIUB'
-)
-BEGIN
-    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-    VALUES (N'20250304070700_fromAIUB', N'8.0.0');
-END;
-GO
-
-COMMIT;
-GO
-
-BEGIN TRANSACTION;
-GO
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20250304160512_responsenullableadded'
-)
-BEGIN
-    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-    VALUES (N'20250304160512_responsenullableadded', N'8.0.0');
+    VALUES (N'20250306141906_InitDb', N'8.0.0');
 END;
 GO
 
