@@ -1,0 +1,89 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@{
+    ViewData["Title"] = "Answers Report";
+}
+
+<h2>Answers Report</h2>
+
+<table id="answersTable" class="display nowrap table table-striped table-bordered" style="width:100%">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Question Text</th>
+            <th>Response Date</th>
+            <th>Shop Name</th>
+            <th>Question Id</th>
+            <th>Selected Option Id</th>
+            <th>Rating Item Id</th>
+            <th>Rating Value</th>
+            <th>Text Response</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#answersTable').DataTable({
+                ajax: {
+                    url: '@Url.Action("GetAnswerReport", "Answer")',  // Update with your actual controller name
+                    type: 'GET',
+                    dataSrc: ''
+                },
+                columns: [
+                    { data: 'id' },
+                    {
+                        data: 'question',
+                        render: function (data, type, row) {
+                            return data ? data.text : '';   // Show question text if exists
+                        }
+                    },
+                    {
+                        data: 'response',
+                        render: function (data, type, row) {
+                            return data ? data.submissionDate : '';   // Show submission date if exists
+                        }
+                    },
+                    {
+                        data: 'response',
+                        render: function (data, type, row) {
+                            return data ? data.shopName : '';   // Show shop name if exists
+                        }
+                    },
+                    { data: 'questionId' },
+                    {
+                        data: 'selectedOptionId',
+                        render: function (data) {
+                            return data ?? '-';  // Show dash if null
+                        }
+                    },
+                    {
+                        data: 'ratingItemId',
+                        render: function (data) {
+                            return data ?? '-';
+                        }
+                    },
+                    {
+                        data: 'ratingValue',
+                        render: function (data) {
+                            return data ?? '-';
+                        }
+                    },
+                    {
+                        data: 'textResponse',
+                        render: function (data) {
+                            return data ?? '-';
+                        }
+                    }
+                ],
+                responsive: true,
+                scrollX: true
+            });
+        });
+    </script>
+}
