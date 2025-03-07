@@ -2,16 +2,75 @@
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
 using ICR_WEB_API.Service.Model.DTOs;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Jpeg;
+using SixLabors.ImageSharp.Processing;
 
 namespace ICR_WEB_API.Service.BLL.Repository
 {
     public class ResponseRepo : IResponseRepo
     {
         private readonly ICRSurveyDBContext _iCRSurveyDBContext;
-        public ResponseRepo(ICRSurveyDBContext iCRSurveyDBContext)
+        private readonly IWebHostEnvironment _env;
+        public ResponseRepo(ICRSurveyDBContext iCRSurveyDBContext, IWebHostEnvironment env)
         {
             _iCRSurveyDBContext = iCRSurveyDBContext;
+            _env = env;
+        }
+
+        public async Task<string?> UploadImage(UploadFileDTO fileInfo)
+        {
+            if (fileInfo == null)
+            {
+                return "Invalid data";
+            }
+
+            var base64ImageString = fileInfo.Base64ImageString;
+            var unifiedLicenseNumber = fileInfo.UnifiedLicenseNumber;
+
+            var dataParts = base64ImageString.Split(',');
+            if (dataParts.Length == 2)
+            {
+                base64ImageString = dataParts[1];
+            }
+
+            try
+            {
+                byte[] imageBytes = Convert.FromBase64String(base64ImageString);
+
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                var extension = ".jpg";
+                var uniqueFileName = $"{unifiedLicenseNumber}{extension}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                using (var ms = new MemoryStream(imageBytes))
+                {
+                    using Image image = await Image.LoadAsync(ms);
+                    int maxWidth = 1024;
+                    if (image.Width > maxWidth)
+                    {
+                        image.Mutate(x => x.Resize(maxWidth, 0)); // 0 height for maintains the aspect ratio.
+                    }
+
+                    var encoder = new JpegEncoder { Quality = 75 };
+                    await image.SaveAsync(filePath, encoder);
+                }
+
+                var fileUrl = $"/uploads/{uniqueFileName}";
+
+                return fileUrl;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
 
         public async Task<List<ResponseWithQuestionsAndAnswerDTO>> GetAllFormatedResponse()
@@ -154,6 +213,14 @@ namespace ICR_WEB_API.Service.BLL.Repository
             {
                 if (entity == null) return null;
 
+                var fileUrl = await UploadImage(new UploadFileDTO()
+                {
+                    Base64ImageString = entity.ImageLicensePlate,
+                    UnifiedLicenseNumber = entity.UnifiedLicenseNumber
+                });
+
+                entity.ImageLicensePlate = fileUrl ?? "";
+
                 var resultEntry = await _iCRSurveyDBContext.Responses.AddAsync(entity);
                 await _iCRSurveyDBContext.SaveChangesAsync();
 
@@ -173,6 +240,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     AIESECActivity = resultEntry.Entity.AIESECActivity,
                     Municipality = resultEntry.Entity.Municipality,
                     FullAddress = resultEntry.Entity.FullAddress,
+                    ImageLicensePlate = resultEntry.Entity.ImageLicensePlate,
                     IsAnswerSubmitted = resultEntry.Entity.IsAnswerSubmitted,
                     UserId = resultEntry.Entity.UserId,
                 };
