@@ -36,8 +36,8 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     b.Property<int?>("RatingItemId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("RatingValue")
-                        .HasColumnType("int");
+                    b.Property<string>("RatingValue")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ResponseId")
                         .HasColumnType("int");
@@ -151,7 +151,11 @@ namespace ICR_WEB_API.Service.Model.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsSubmited")
+                    b.Property<string>("ImageLicensePlate")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsAnswerSubmitted")
                         .HasColumnType("bit");
 
                     b.Property<string>("LicenseIssueDateLabel")
@@ -187,10 +191,6 @@ namespace ICR_WEB_API.Service.Model.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
-
-                    b.Property<string>("imageBase64")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

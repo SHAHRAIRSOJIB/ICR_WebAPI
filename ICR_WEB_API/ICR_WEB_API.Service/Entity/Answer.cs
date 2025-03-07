@@ -36,7 +36,7 @@
 
         // Rating Type
         public int? RatingItemId { get; set; }
-        public int? RatingValue { get; set; } // 1-5 for Rating questions
+        public string? RatingValue { get; set; } // 1-5 for Rating questions
 
         // Text Type
         public string? TextResponse { get; set; }
@@ -48,44 +48,3 @@
         public virtual RatingScaleItem? RatingItem { get; set; }
     }
 }
-
-
-#region ResponseSchema
-/*
-[
-  // Question type is Select
-  {
-    "responseId": 1,
-    "questionId": 1,
-    "selectedOptionId": 1
-  },
-
-  // Question type is Checkbox
-  {
-    "responseId": 1,
-    "questionId": 2,
-    "selectedOptionId": 2
-  },
-  {
-    "responseId": 1,
-    "questionId": 2,
-    "selectedOptionId": 3
-  },
-
-  // Question type is Rating
-  {
-    "responseId": 1,
-    "questionId": 3,
-	"RatingItemId": 34,
-	"RatingValue": 4
-  },
-
-  // Question type is Text
-  {
-    "responseId": 1,
-    "questionId": 4,
-	"TextResponse": "Kichu ekta"
-  }
-]
-*/
-#endregion response

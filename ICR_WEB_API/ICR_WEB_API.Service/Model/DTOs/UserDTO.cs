@@ -11,6 +11,6 @@ namespace ICR_WEB_API.Service.Model.DTOs
         public string Email { get; set; }
         [Required]
         public string Password { get; set; }
-        public EnumCollection.UserType UserType { get; set; }
+        public UserType UserType { get; set; }
     }
 }

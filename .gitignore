@@ -729,3 +729,4 @@ obj/
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio,visualstudiocode,dotnetcore,aspnetcore,csharp
 
 !ICR_WEB_API.slnLaunch.user
+/ICR_WEB_API/ICR_WEB_API/wwwroot/uploads

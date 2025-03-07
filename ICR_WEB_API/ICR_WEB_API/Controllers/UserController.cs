@@ -40,7 +40,7 @@ namespace ICR_WEB_API.Controllers
                 return BadRequest(ModelState.ValidationState);
             }
 
-            var isExits = await _userRepo.IsExistByEmail(entity);
+            var isExits = await _userRepo.IsExistByEmail(entity.Email);
 
             if (isExits)
             {
@@ -65,9 +65,9 @@ namespace ICR_WEB_API.Controllers
 
         [HttpPost("Update")]
         [Authorize]
-        public async Task<IActionResult> Update(User entity)
+        public async Task<IActionResult> Update(UserUpdateDTO entity)
         {
-            if (entity == null || entity.Id == 0)
+            if (entity == null)
             {
                 return BadRequest(new
                 {
@@ -75,29 +75,48 @@ namespace ICR_WEB_API.Controllers
                 });
             }
 
-            if (entity.UserType == null)
+            if (!ModelState.IsValid)
             {
-                return BadRequest(new
-                {
-                    Message = "UserType is not defined"
-                });
+                return BadRequest(ModelState.ValidationState);
             }
 
-            if (string.IsNullOrEmpty(entity.Email))
-            {
-                return BadRequest(new
-                {
-                    Message = "Email is not defined"
-                });
-            }
-
-            var isExits = await _userRepo.IsExistById(entity);
+            var isExits = await _userRepo.IsExistById(entity.Id);
 
             if (!isExits)
             {
                 return NotFound(new
                 {
                     Message = "User Not found"
+                });
+            }
+
+            var user = await _userRepo.GetById(entity.Id);
+
+            if (user == null)
+            {
+                return NotFound(new
+                {
+                    Message = "User Not found"
+                });
+            }
+
+            bool isUpdated;
+            if (user.Email.Equals(entity.Email))
+                isUpdated = true;
+            else
+            {
+                var isExist = await _userRepo.IsExistByEmail(entity.Email);
+                if (!isExist)
+                    isUpdated = true;
+                else
+                    isUpdated = false;
+            }
+
+            if (!isUpdated)
+            {
+                return BadRequest(new
+                {
+                    Message = "Email already exist"
                 });
             }
 

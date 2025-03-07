@@ -1,11 +1,11 @@
-﻿using static ICR_WEB_API.Service.Enum.EnumCollection;
+﻿using ICR_WEB_API.Service.Enum;
 
 namespace ICR_WEB_API.Service.Entity
 {
     public class Question
     {
         public int Id { get; set; }
-        public required string Text { get; set; }
+        public string Text { get; set; }
         public bool IsShowable { get; set; }
         public float SortOrder { get; set; }
         public QuestionType Type { get; set; }

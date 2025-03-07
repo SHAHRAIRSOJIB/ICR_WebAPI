@@ -7,7 +7,7 @@ namespace ICR_WEB_API.Service.Model.DTOs
     {
         public int Id { get; set; }
 
-        public EnumCollection.QuestionType Type { get; set; }
+        public QuestionType Type { get; set; }
 
         public string QuestionText { get; set; }
 

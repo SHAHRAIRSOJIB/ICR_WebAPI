@@ -3,7 +3,7 @@
     public class Option
     {
         public int Id { get; set; }
-        public required string OptionText { get; set; }
+        public string OptionText { get; set; }
 
         // Foreign Key
         public int QuestionId { get; set; }

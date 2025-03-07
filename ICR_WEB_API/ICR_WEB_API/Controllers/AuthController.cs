@@ -47,7 +47,7 @@ namespace ICR_WEB_API.Controllers
                 return BadRequest(ModelState.ValidationState);
             }
 
-            var isExits = await _userRepo.IsExistByEmail(entity);
+            var isExits = await _userRepo.IsExistByEmail(entity.Email);
 
             if (isExits)
             {

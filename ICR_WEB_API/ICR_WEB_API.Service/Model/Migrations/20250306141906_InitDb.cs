@@ -99,8 +99,8 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     AIESECActivity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Municipality = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ImageBase64 = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IsSubmited = table.Column<bool>(type: "bit", nullable: false),
+                    ImageLicensePlate = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    IsAnswerSubmitted = table.Column<bool>(type: "bit", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -124,7 +124,7 @@ namespace ICR_WEB_API.Service.Model.Migrations
                     QuestionId = table.Column<int>(type: "int", nullable: false),
                     SelectedOptionId = table.Column<int>(type: "int", nullable: true),
                     RatingItemId = table.Column<int>(type: "int", nullable: true),
-                    RatingValue = table.Column<int>(type: "int", nullable: true),
+                    RatingValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TextResponse = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

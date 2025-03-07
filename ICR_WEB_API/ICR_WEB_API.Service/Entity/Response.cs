@@ -16,8 +16,8 @@
         public string AIESECActivity { get; set; }              // نشاط الايزك
         public string Municipality { get; set; }                // البلدية
         public string FullAddress { get; set; }                 // العنوان الكامل
-        public string imageBase64 { get; set; }
-        public bool IsSubmited { get; set; }
+        public string ImageLicensePlate { get; set; }
+        public bool IsAnswerSubmitted { get; set; }
 
         // Navigation Property
         public int UserId { get; set; }
