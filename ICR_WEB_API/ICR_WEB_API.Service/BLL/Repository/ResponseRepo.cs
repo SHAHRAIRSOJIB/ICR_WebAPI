@@ -67,9 +67,9 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
                 return fileUrl;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return ex.Message;
             }
         }
 
