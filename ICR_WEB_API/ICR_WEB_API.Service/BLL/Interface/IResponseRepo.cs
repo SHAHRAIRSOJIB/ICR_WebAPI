@@ -5,10 +5,11 @@ namespace ICR_WEB_API.Service.BLL.Interface
 {
     public interface IResponseRepo
     {
+        Task<List<ResponseWithQuestionsAndAnswerDTO>> GetAllFormatedResponse();
         Task<ResponseDTO?> GetById(int id);
-        Task<bool> IsExist(string unifiedLicenseNumber, string ownerIDNumber);
-        Task<ResponseDTO?> GetByUnifiedLicenseNumberAndOwnerIDNumber(string unifiedLicenseNumber, string ownerIDNumber);
-        Task<ResponseDTO?> UpdateStatus(string unifiedLicenseNumber, string ownerIDNumber, bool status = false);
+        Task<bool> IsExist(string unifiedLicenseNumber);
+        Task<ResponseDTO?> GetByUnifiedLicenseNumber(string unifiedLicenseNumber);
+        Task<ResponseDTO?> UpdateStatus(string unifiedLicenseNumber, bool status = false);
         Task<List<Response>> GetAll();
         Task<ResponseDTO?> Save(Response entity);
     }

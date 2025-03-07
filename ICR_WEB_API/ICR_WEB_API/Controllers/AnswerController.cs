@@ -1,6 +1,5 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.Entity;
-using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,11 +16,12 @@ namespace ICR_WEB_API.Controllers
         {
             _answerRepo = answerRepo;
         }
-        [HttpGet]
-        public async Task<List<AnswerDTO>> GetAllAnswers()
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAllAnswers()
         {
-            var list = await _answerRepo.GetAll();
-            return list;
+            var answers = await _answerRepo.GetAll();
+
+            return Ok(answers);
         }
 
         [HttpPost]

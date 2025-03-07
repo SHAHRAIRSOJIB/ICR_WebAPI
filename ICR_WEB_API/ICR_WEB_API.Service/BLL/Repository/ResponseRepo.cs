@@ -14,6 +14,49 @@ namespace ICR_WEB_API.Service.BLL.Repository
             _iCRSurveyDBContext = iCRSurveyDBContext;
         }
 
+        public async Task<List<ResponseWithQuestionsAndAnswerDTO>> GetAllFormatedResponse()
+        {
+            var responsesWithData = await _iCRSurveyDBContext.Responses
+                .Where(r => r.IsAnswerSubmitted == true)
+                .Select(r => new ResponseWithQuestionsAndAnswerDTO
+                {
+                    ResponseId = r.Id,
+                    SubmissionDate = r.SubmissionDate,
+                    ShopName = r.ShopName,
+                    OwnerName = r.OwnerName,
+                    DistrictName = r.DistrictName,
+                    StreetName = r.StreetName,
+                    UnifiedLicenseNumber = r.UnifiedLicenseNumber,
+                    LicenseIssueDateLabel = r.LicenseIssueDateLabel,
+                    OwnerIDNumber = r.OwnerIDNumber,
+                    AIESECActivity = r.AIESECActivity,
+                    Municipality = r.Municipality,
+                    FullAddress = r.FullAddress,
+                    ImageLicensePlate = r.ImageLicensePlate,
+                    IsAnswerSubmitted = r.IsAnswerSubmitted,
+                    User = r.User,
+                    QuestionWithAnswers = r.Answers
+                        .Select(a => new QuestionWithAnswersDTO
+                        {
+                            AnswerId = a.Id,
+                            QuestionId = a.QuestionId,
+                            Type = a.Question.Type,
+                            QuestionText = a.Question.Text,
+                            SortOrder = a.Question.SortOrder,
+                            SelectedOptionText = a.SelectedOption != null ? a.SelectedOption.OptionText : null,
+                            RatingItemText = a.RatingItem != null ? a.RatingItem.ItemText : null,
+                            RatingItemValue = a.RatingItem != null ? a.RatingValue : null,
+                            TextResponseAnswer = a.TextResponse
+                        })
+                        .OrderBy(q => q.SortOrder)
+                        .ToList()
+                })
+                .ToListAsync();
+
+
+            return responsesWithData;
+        }
+
         public async Task<List<Response>> GetAll()
         {
             try
@@ -64,21 +107,21 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
-        public async Task<bool> IsExist(string unifiedLicenseNumber, string ownerIDNumber)
+        public async Task<bool> IsExist(string unifiedLicenseNumber)
         {
             var result = await _iCRSurveyDBContext.Responses.AsNoTracking()
-                .Where(x => x.OwnerIDNumber == ownerIDNumber && x.UnifiedLicenseNumber == unifiedLicenseNumber).CountAsync();
+                .Where(x => x.UnifiedLicenseNumber == unifiedLicenseNumber).CountAsync();
             return result > 0;
         }
 
-        public async Task<ResponseDTO?> GetByUnifiedLicenseNumberAndOwnerIDNumber(string unifiedLicenseNumber, string ownerIDNumber)
+        public async Task<ResponseDTO?> GetByUnifiedLicenseNumber(string unifiedLicenseNumber)
         {
             try
             {
                 var res = new ResponseDTO();
                 res = await _iCRSurveyDBContext.Responses
                     .AsNoTracking()
-                    .Where(x => x.UnifiedLicenseNumber == unifiedLicenseNumber && x.OwnerIDNumber == ownerIDNumber)
+                    .Where(x => x.UnifiedLicenseNumber == unifiedLicenseNumber)
                     .Select(x => new ResponseDTO
                     {
                         Id = x.Id,
@@ -140,15 +183,15 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
-        public async Task<ResponseDTO?> UpdateStatus(string unifiedLicenseNumber, string ownerIDNumber, bool status = false)
+        public async Task<ResponseDTO?> UpdateStatus(string unifiedLicenseNumber, bool status = false)
         {
             try
             {
-                var isExist = await IsExist(unifiedLicenseNumber, ownerIDNumber);
+                var isExist = await IsExist(unifiedLicenseNumber);
 
                 if (!isExist) return null;
 
-                var response = await _iCRSurveyDBContext.Responses.Where(x => x.UnifiedLicenseNumber == unifiedLicenseNumber && x.OwnerIDNumber == ownerIDNumber).FirstOrDefaultAsync();
+                var response = await _iCRSurveyDBContext.Responses.Where(x => x.UnifiedLicenseNumber == unifiedLicenseNumber).FirstOrDefaultAsync();
 
                 if (response == null) return null;
 

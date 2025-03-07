@@ -17,15 +17,22 @@ namespace ICR_WEB_API.Controllers
             _responseRepo = responseRepo;
         }
 
-        [HttpGet]
-        [Route("GetAll")]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("GetAllFormated")]
+        public async Task<IActionResult> GetAllFormated()
         {
-            var data = await _responseRepo.GetAll();
+            var data = await _responseRepo.GetAllFormatedResponse();
             if (data.Count > 0)
                 return Ok(data);
             else
                 return NotFound(new { message = "No Response Data found" });
+        }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetAll()
+        {
+            var data = await _responseRepo.GetAll();
+
+            return Ok(data);
         }
 
         [HttpGet("{id}")]
@@ -56,7 +63,7 @@ namespace ICR_WEB_API.Controllers
                 return BadRequest(ModelState.ValidationState);
             }
 
-            var response = await _responseRepo.GetByUnifiedLicenseNumberAndOwnerIDNumber(entity.UnifiedLicenseNumber, entity.OwnerIDNumber);
+            var response = await _responseRepo.GetByUnifiedLicenseNumber(entity.UnifiedLicenseNumber);
 
             if (response == null)
             {
@@ -66,7 +73,7 @@ namespace ICR_WEB_API.Controllers
                 });
             }
 
-            var updatedResponse = await _responseRepo.UpdateStatus(entity.UnifiedLicenseNumber, entity.OwnerIDNumber, entity.IsAnswerSubmitted);
+            var updatedResponse = await _responseRepo.UpdateStatus(entity.UnifiedLicenseNumber, entity.IsAnswerSubmitted);
 
             if (updatedResponse == null)
             {
@@ -95,7 +102,7 @@ namespace ICR_WEB_API.Controllers
                 });
             }
 
-            var response = await _responseRepo.GetByUnifiedLicenseNumberAndOwnerIDNumber(entity.UnifiedLicenseNumber, entity.OwnerIDNumber);
+            var response = await _responseRepo.GetByUnifiedLicenseNumber(entity.UnifiedLicenseNumber);
 
             if (response != null && response.IsAnswerSubmitted == false)
             {
