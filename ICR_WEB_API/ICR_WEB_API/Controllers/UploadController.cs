@@ -1,4 +1,5 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
+using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
@@ -16,8 +17,19 @@ namespace ICR_WEB_API.Controllers
         private readonly IResponseRepo _responseRepo = responseRepo;
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile file, string unifiedLicenseNumber)
+        public async Task<IActionResult> UploadImage(UploadFileDTO fileInfo)
         {
+            if (fileInfo == null)
+            {
+                return BadRequest(new
+                {
+                    Message = "Invalid data"
+                });
+            }
+
+            var file = fileInfo.File;
+            var unifiedLicenseNumber = fileInfo.UnifiedLicenseNumber;
+
             if (file == null || file.Length == 0)
                 return BadRequest(new
                 {
