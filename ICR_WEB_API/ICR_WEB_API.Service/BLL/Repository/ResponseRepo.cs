@@ -40,6 +40,11 @@ namespace ICR_WEB_API.Service.BLL.Repository
             {
                 byte[] imageBytes = Convert.FromBase64String(base64ImageString);
 
+                if(_env.WebRootPath == null)
+                {
+                    return "wwwroot folder is not created";
+                }
+
                 var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
                 if (!Directory.Exists(uploadsFolder))
                 {
