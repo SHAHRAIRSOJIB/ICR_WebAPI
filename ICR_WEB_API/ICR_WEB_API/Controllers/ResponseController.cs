@@ -19,7 +19,6 @@ namespace ICR_WEB_API.Controllers
         }
 
         [HttpGet("ExportExcel")]
-        [AllowAnonymous]
         public async Task<IActionResult> DownloadExcel()
         {
             var responses = await _responseRepo.GetAllFormatedResponse();
