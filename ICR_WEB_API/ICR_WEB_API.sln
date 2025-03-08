@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ICR_WEB_API", "ICR_WEB_API\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICR_WEB_API.Service", "ICR_WEB_API.Service\ICR_WEB_API.Service.csproj", "{8A7AB8B9-F880-423A-B788-BA00111ECD75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ICR_DashBoard", "ICR_DashBoard\ICR_DashBoard.csproj", "{C54A7DFA-ADB7-4724-BF1C-3A2D8A80E618}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{8A7AB8B9-F880-423A-B788-BA00111ECD75}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A7AB8B9-F880-423A-B788-BA00111ECD75}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A7AB8B9-F880-423A-B788-BA00111ECD75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C54A7DFA-ADB7-4724-BF1C-3A2D8A80E618}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C54A7DFA-ADB7-4724-BF1C-3A2D8A80E618}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C54A7DFA-ADB7-4724-BF1C-3A2D8A80E618}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C54A7DFA-ADB7-4724-BF1C-3A2D8A80E618}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
