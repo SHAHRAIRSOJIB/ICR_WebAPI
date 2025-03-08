@@ -16,6 +16,7 @@
         public string AIESECActivity { get; set; }
         public string Municipality { get; set; }
         public string FullAddress { get; set; }
+        public string ImageLicensePlate { get; set; }
         public bool IsAnswerSubmitted { get; set; }
 
         // Navigation Property
