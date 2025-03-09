@@ -1,6 +1,7 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
 using ICR_WEB_API.Service.BLL.Services;
 using ICR_WEB_API.Service.Entity;
+using ICR_WEB_API.Service.Enum;
 using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
             {
                 byte[] imageBytes = Convert.FromBase64String(base64ImageString);
 
-                if(_env.WebRootPath == null)
+                if (_env.WebRootPath == null)
                 {
                     return "wwwroot folder is not created";
                 }
@@ -78,47 +79,159 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
-        public async Task<List<ResponseWithQuestionsAndAnswerDTO>> GetAllFormatedResponse()
+        public async Task<FormattedResponseDto> GetAllFormatedResponse()
         {
-            var responsesWithData = await _iCRSurveyDBContext.Responses
-                .Where(r => r.IsAnswerSubmitted == true)
-                .Select(r => new ResponseWithQuestionsAndAnswerDTO
-                {
-                    ResponseId = r.Id,
-                    SubmissionDate = r.SubmissionDate,
-                    ShopName = r.ShopName,
-                    OwnerName = r.OwnerName,
-                    DistrictName = r.DistrictName,
-                    StreetName = r.StreetName,
-                    UnifiedLicenseNumber = r.UnifiedLicenseNumber,
-                    LicenseIssueDateLabel = r.LicenseIssueDateLabel,
-                    OwnerIDNumber = r.OwnerIDNumber,
-                    AIESECActivity = r.AIESECActivity,
-                    Municipality = r.Municipality,
-                    FullAddress = r.FullAddress,
-                    ImageLicensePlate = r.ImageLicensePlate,
-                    IsAnswerSubmitted = r.IsAnswerSubmitted,
-                    User = r.User,
-                    QuestionWithAnswers = r.Answers
-                        .Select(a => new QuestionWithAnswersDTO
-                        {
-                            AnswerId = a.Id,
-                            QuestionId = a.QuestionId,
-                            Type = a.Question.Type,
-                            QuestionText = a.Question.Text,
-                            SortOrder = a.Question.SortOrder,
-                            SelectedOptionText = a.SelectedOption != null ? a.SelectedOption.OptionText : null,
-                            RatingItemText = a.RatingItem != null ? a.RatingItem.ItemText : null,
-                            RatingItemValue = a.RatingItem != null ? a.RatingValue : null,
-                            TextResponseAnswer = a.TextResponse
-                        })
-                        .OrderBy(q => q.SortOrder)
-                        .ToList()
-                })
+            var questions = await _iCRSurveyDBContext.Questions
+                .Where(q => q.IsShowable)
+                .Include(q => q.Options)
+                .Include(q => q.RatingScaleItems)
+                .OrderBy(q => q.SortOrder)
                 .ToListAsync();
 
+            var columns = new List<ColumnDefinition>();
+            foreach (var question in questions)
+            {
+                switch (question.Type)
+                {
+                    case QuestionType.Text:
+                        var uniqueKey = $"{question.Id}-{question.Text}";
+                        var displayLabel = $"{question.Text}";
+                        columns.Add(new ColumnDefinition
+                        {
+                            QuestionId = question.Id,
+                            UniqueKey = uniqueKey,
+                            DisplayLabel = displayLabel
+                        });
+                        break;
 
-            return responsesWithData;
+                    case QuestionType.Select:
+                    case QuestionType.Checkbox:
+                        if (question.Options != null)
+                        {
+                            foreach (var option in question.Options)
+                            {
+                                var uniqueKey1 = $"{question.Id}-{question.Text}-{option.Id}-{option.OptionText}";
+                                var displayLabel1 = $"{question.Text} - {option.OptionText}";
+                                columns.Add(new ColumnDefinition
+                                {
+                                    QuestionId = question.Id,
+                                    OptionId = option.Id,
+                                    UniqueKey = uniqueKey1,
+                                    DisplayLabel = displayLabel1
+                                });
+                            }
+                        }
+                        break;
+
+                    case QuestionType.Rating:
+                        if (question.RatingScaleItems != null)
+                        {
+                            foreach (var ratingScaleItem in question.RatingScaleItems)
+                            {
+                                var uniqueKey1 = $"{question.Id}-{question.Text}-{ratingScaleItem.Id}-{ratingScaleItem.ItemText}";
+                                var displayLabel1 = $"{question.Text} - {ratingScaleItem.ItemText}";
+                                columns.Add(new ColumnDefinition
+                                {
+                                    QuestionId = question.Id,
+                                    RatingItemId = ratingScaleItem.Id,
+                                    UniqueKey = uniqueKey1,
+                                    DisplayLabel = displayLabel1
+                                });
+                            }
+                        }
+                        break;
+                }
+            }
+
+            var responses = await _iCRSurveyDBContext.Responses
+                .Include(r => r.Answers)
+                .ThenInclude(a => a.SelectedOption)
+                .Include(r => r.Answers)
+                .ThenInclude(a => a.RatingItem)
+                .Include(r => r.User)
+                .ToListAsync();
+
+            var formattedResponse = new FormattedResponseDto
+            {
+                Columns = [.. columns],
+                Rows = new List<FormattedResponseRowDto>()
+            };
+
+            foreach (var response in responses)
+            {
+                var answerDict = columns.GroupBy(c => c.UniqueKey).ToDictionary(g => g.Key, g => string.Empty);
+
+                foreach (var answer in response.Answers)
+                {
+                    var question = questions.FirstOrDefault(q => q.Id == answer.QuestionId);
+                    if (question != null)
+                    {
+                        if (question.Type == QuestionType.Text)
+                        {
+                            answerDict[$"{question.Id}-{question.Text}"] = answer.TextResponse;
+                        }
+                        else if (question.Type == QuestionType.Select)
+                        {
+                            if (answer.SelectedOptionId.HasValue)
+                            {
+                                var option = question.Options.FirstOrDefault(o => o.Id == answer.SelectedOptionId.Value);
+                                if (option != null)
+                                {
+                                    var key = $"{question.Id}-{question.Text}-{option.Id}-{option.OptionText}";
+                                    answerDict[key] = option.OptionText;
+                                }
+                            }
+                        }
+                        else if (question.Type == QuestionType.Checkbox)
+                        {
+                            if (answer.SelectedOptionId.HasValue)
+                            {
+                                var option = question.Options.FirstOrDefault(o => o.Id == answer.SelectedOptionId.Value);
+                                if (option != null)
+                                {
+                                    var key = $"{question.Id}-{question.Text}-{option.Id}-{option.OptionText}";
+                                    // For checkboxes, there may be multiple entries – each gets its own column value.
+                                    answerDict[key] = option.OptionText;
+                                }
+                            }
+                        }
+                        else if (question.Type == QuestionType.Rating)
+                        {
+                            if (answer.RatingItemId.HasValue)
+                            {
+                                var ratingScaleItem = question.RatingScaleItems.FirstOrDefault(i => i.Id == answer.RatingItemId.Value);
+                                if (ratingScaleItem != null)
+                                {
+                                    var key = $"{question.Id}-{question.Text}-{ratingScaleItem.Id}-{ratingScaleItem.ItemText}";
+                                    answerDict[key] = answer.RatingValue;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                formattedResponse.Rows.Add(new FormattedResponseRowDto
+                {
+                    ResponseId = response.Id,
+                    SubmissionDate = response.SubmissionDate,
+                    UnifiedLicenseNumber = response.UnifiedLicenseNumber,
+                    LicenseIssueDateLabel = response.LicenseIssueDateLabel,
+                    ShopName = response.ShopName,
+                    DistrictName = response.DistrictName,
+                    StreetName = response.StreetName,
+                    Municipality = response.Municipality,
+                    FullAddress = response.FullAddress,
+                    AIESECActivity = response.AIESECActivity,
+                    OwnerIDNumber = response.OwnerIDNumber,
+                    OwnerName = response.OwnerName,
+                    ImageLicensePlate = response.ImageLicensePlate,
+                    IsAnswerSubmitted = response.IsAnswerSubmitted,
+                    User = response.User,
+                    Answers = answerDict
+                });
+            }
+
+            return formattedResponse;
         }
 
         public async Task<List<Response>> GetAll()
@@ -159,6 +272,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                         AIESECActivity = x.AIESECActivity,
                         Municipality = x.Municipality,
                         FullAddress = x.FullAddress,
+                        ImageLicensePlate = x.ImageLicensePlate,
                         IsAnswerSubmitted = x.IsAnswerSubmitted,
                         UserId = x.UserId
                     }).SingleOrDefaultAsync();

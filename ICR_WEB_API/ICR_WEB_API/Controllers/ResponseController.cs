@@ -21,98 +21,65 @@ namespace ICR_WEB_API.Controllers
         [HttpGet("ExportExcel")]
         public async Task<IActionResult> DownloadExcel()
         {
-            var responses = await _responseRepo.GetAllFormatedResponse();
-
-            var questionGroups = responses
-                .SelectMany(r => r.QuestionWithAnswers)
-                .GroupBy(q => new { q.QuestionId, q.QuestionText, q.Type, q.SortOrder })
-                .Select(g => new
-                {
-                    QuestionId = g.Key.QuestionId,
-                    QuestionText = g.Key.QuestionText,
-                    Type = g.Key.Type,
-                    SortOrder = g.Key.SortOrder,
-                    // For rating type, get distinct RatingItemText; for option type, get distinct SelectedOptionText.
-                    Headers = g.Key.Type == Service.Enum.QuestionType.Rating
-                        ? g.Select(a => a.RatingItemText).Where(text => !string.IsNullOrEmpty(text)).Distinct().ToList()
-                        : g.Select(a => a.SelectedOptionText).Where(text => !string.IsNullOrEmpty(text)).Distinct().ToList()
-                })
-                .OrderBy(x => x.SortOrder)
-                .ToList();
+            var formattedResponse = await _responseRepo.GetAllFormatedResponse();
 
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Responses");
-                int col = 1;
-                int row = 1;
+                var _row = 1;
+                var _col = 1;
 
-                worksheet.Cell(1, col++).Value = "ResponseId";
-                worksheet.Cell(1, col++).Value = "SubmissionDate";
-                worksheet.Cell(1, col++).Value = "ShopName";
-                worksheet.Cell(1, col++).Value = "OwnerName";
-                worksheet.Cell(1, col++).Value = "DistrictName";
-                worksheet.Cell(1, col++).Value = "StreetName";
-                worksheet.Cell(1, col++).Value = "UnifiedLicenseNumber";
-                worksheet.Cell(1, col++).Value = "LicenseIssueDateLabel";
-                worksheet.Cell(1, col++).Value = "OwnerIDNumber";
-                worksheet.Cell(1, col++).Value = "AIESECActivity";
-                worksheet.Cell(1, col++).Value = "Municipality";
-                worksheet.Cell(1, col++).Value = "FullAddress";
-                worksheet.Cell(1, col++).Value = "ImageLicensePlate";
-                worksheet.Cell(1, col++).Value = "IsAnswerSubmitted";
+                worksheet.Cell(_row, _col++).Value = "Response Id";
+                worksheet.Cell(_row, _col++).Value = "Submission Date";
+                worksheet.Cell(_row, _col++).Value = "Shop Name";
+                worksheet.Cell(_row, _col++).Value = "Owner Name";
+                worksheet.Cell(_row, _col++).Value = "District Name";
+                worksheet.Cell(_row, _col++).Value = "Street Name";
+                worksheet.Cell(_row, _col++).Value = "Unified License Number";
+                worksheet.Cell(_row, _col++).Value = "License Issue Date Label";
+                worksheet.Cell(_row, _col++).Value = "Owner ID Number";
+                worksheet.Cell(_row, _col++).Value = "AIESEC Activity";
+                worksheet.Cell(_row, _col++).Value = "Municipality";
+                worksheet.Cell(_row, _col++).Value = "Full Address";
+                worksheet.Cell(_row, _col++).Value = "Image License Plate";
+                worksheet.Cell(_row, _col++).Value = "Is Answer Submitted";
+                worksheet.Cell(_row, _col++).Value = "User Email";
 
-                // For each question, create dynamic headers based on the maximum count.
-                foreach (var q in questionGroups)
+                // Write headers
+                for (int i = 0; i < formattedResponse.Columns.Count; i++)
                 {
-                    foreach (var header in q.Headers)
+                    worksheet.Cell(_row, _col++).Value = formattedResponse.Columns[i].DisplayLabel;
+                }
+
+                // Write rows
+                for (int rowIndex = 0; rowIndex < formattedResponse.Rows.Count; rowIndex++)
+                {
+                    var row = formattedResponse.Rows[rowIndex];
+                    var col = 1;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.ResponseId;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.SubmissionDate;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.ShopName;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.OwnerName;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.DistrictName;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.StreetName;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.UnifiedLicenseNumber;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.LicenseIssueDateLabel;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.OwnerIDNumber;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.AIESECActivity;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.Municipality;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.FullAddress;
+                    worksheet.Cell(rowIndex + 2, col++).Value = $"{Request.Scheme}://{Request.Host}" + row.ImageLicensePlate;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.IsAnswerSubmitted;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.User != null && !String.IsNullOrEmpty(row.User.Email) ? row.User.Email : "";
+
+                    for (int colIndex = 0; colIndex < formattedResponse.Columns.Count; colIndex++)
                     {
-                        // Here we set the header using the actual rating or option text.
-                        worksheet.Cell(row, col++).Value = $"{q.QuestionText} - {header}";
+                        var columnKey = formattedResponse.Columns[colIndex].UniqueKey;
+                        worksheet.Cell(rowIndex + 2, colIndex + col).Value = row.Answers[columnKey];
                     }
                 }
 
-                row = 2;
-                foreach (var response in responses)
-                {
-                    col = 1;
-                    worksheet.Cell(row, col++).Value = response.ResponseId;
-                    worksheet.Cell(row, col++).Value = response.SubmissionDate;
-                    worksheet.Cell(row, col++).Value = response.ShopName;
-                    worksheet.Cell(row, col++).Value = response.OwnerName;
-                    worksheet.Cell(row, col++).Value = response.DistrictName;
-                    worksheet.Cell(row, col++).Value = response.StreetName;
-                    worksheet.Cell(row, col++).Value = response.UnifiedLicenseNumber;
-                    worksheet.Cell(row, col++).Value = response.LicenseIssueDateLabel;
-                    worksheet.Cell(row, col++).Value = response.OwnerIDNumber;
-                    worksheet.Cell(row, col++).Value = response.AIESECActivity;
-                    worksheet.Cell(row, col++).Value = response.Municipality;
-                    worksheet.Cell(row, col++).Value = response.FullAddress;
-                    worksheet.Cell(row, col++).Value = response.ImageLicensePlate;
-                    worksheet.Cell(row, col++).Value = response.IsAnswerSubmitted;
-
-                    foreach (var q in questionGroups)
-                    {
-                        foreach (var header in q.Headers)
-                        {
-                            // Find an answer that matches the header for the current question.
-                            var answer = response.QuestionWithAnswers
-                                .Where(a => a.QuestionId == q.QuestionId)
-                                .FirstOrDefault(a =>
-                                    (q.Type == Service.Enum.QuestionType.Rating && a.RatingItemText == header) ||
-                                    (q.Type != Service.Enum.QuestionType.Rating && a.SelectedOptionText == header));
-
-                            // For rating questions, output the rating value; for options, output the option text.
-                            string cellValue = string.Empty;
-                            if (answer != null)
-                            {
-                                cellValue = q.Type == Service.Enum.QuestionType.Rating ? answer.RatingItemValue : answer.SelectedOptionText;
-                            }
-                            worksheet.Cell(row, col++).Value = cellValue;
-                        }
-                    }
-                    row++;
-                }
-
+                // Save or return workbook as needed.
                 using (var stream = new MemoryStream())
                 {
                     workbook.SaveAs(stream);
@@ -125,11 +92,12 @@ namespace ICR_WEB_API.Controllers
             }
         }
 
+
         [HttpGet("GetAllFormated")]
         public async Task<IActionResult> GetAllFormated()
         {
             var data = await _responseRepo.GetAllFormatedResponse();
-            if (data.Count > 0)
+            if (data != null)
                 return Ok(data);
             else
                 return NotFound(new { message = "No Response Data found" });

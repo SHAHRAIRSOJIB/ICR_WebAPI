@@ -1,13 +1,17 @@
 ﻿using ICR_WEB_API.Service.Entity;
-using ICR_WEB_API.Service.Enum;
 
 namespace ICR_WEB_API.Service.Model.DTOs
 {
-    public class ResponseWithQuestionsAndAnswerDTO
+    public class FormattedResponseDto
+    {
+        public List<ColumnDefinition> Columns { get; set; }
+        public List<FormattedResponseRowDto> Rows { get; set; }
+    }
+
+    public class FormattedResponseRowDto
     {
         public int ResponseId { get; set; }
         public DateTime SubmissionDate { get; set; }
-
         public string ShopName { get; set; }
         public string OwnerName { get; set; }
         public string DistrictName { get; set; }
@@ -20,21 +24,16 @@ namespace ICR_WEB_API.Service.Model.DTOs
         public string FullAddress { get; set; }
         public string ImageLicensePlate { get; set; }
         public bool IsAnswerSubmitted { get; set; }
-
         public User User { get; set; }
-        public ICollection<QuestionWithAnswersDTO> QuestionWithAnswers { get; set; }
+        public Dictionary<string, string> Answers { get; set; }
     }
 
-    public class QuestionWithAnswersDTO
+    public class ColumnDefinition
     {
-        public int AnswerId { get; set; }
         public int QuestionId { get; set; }
-        public QuestionType Type { get; set; }
-        public string QuestionText { get; set; }
-        public float SortOrder { get; set; }
-        public string? SelectedOptionText { get; set; }
-        public string? RatingItemText { get; set; }
-        public string? RatingItemValue { get; set; }
-        public string? TextResponseAnswer { get; set; }
+        public int? OptionId { get; set; } // For select/checkbox types
+        public int? RatingItemId { get; set; } // For rating type
+        public string UniqueKey { get; set; } // e.g., "1-What is your hobby? - 5-Reading"
+        public string DisplayLabel { get; set; } // e.g., "What is your hobby? - Reading"
     }
 }

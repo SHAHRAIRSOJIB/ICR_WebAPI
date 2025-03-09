@@ -5,7 +5,7 @@ namespace ICR_WEB_API.Service.BLL.Interface
 {
     public interface IResponseRepo
     {
-        Task<List<ResponseWithQuestionsAndAnswerDTO>> GetAllFormatedResponse();
+        Task<FormattedResponseDto> GetAllFormatedResponse();
         Task<ResponseDTO?> GetById(int id);
         Task<bool> IsExist(string unifiedLicenseNumber);
         Task<string?> UploadImage(UploadFileDTO fileInfo);
