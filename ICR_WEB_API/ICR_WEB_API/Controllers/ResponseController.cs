@@ -182,7 +182,7 @@ namespace ICR_WEB_API.Controllers
 
             if (response != null && response.IsAnswerSubmitted == false)
             {
-                return Ok(new
+                return StatusCode(201, new
                 {
                     Message = "Already exist but answers not submitted",
                     Response = response
@@ -190,9 +190,10 @@ namespace ICR_WEB_API.Controllers
             }
             else if (response != null && response.IsAnswerSubmitted == true)
             {
-                return BadRequest(new
+                return StatusCode(204, new
                 {
-                    Message = "Already submitted"
+                    Message = "Already submitted",
+                    Response = response
                 });
             }
 
