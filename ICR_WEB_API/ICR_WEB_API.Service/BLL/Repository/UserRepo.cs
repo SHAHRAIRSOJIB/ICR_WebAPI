@@ -21,7 +21,14 @@ namespace ICR_WEB_API.Service.BLL.Repository
         public async Task<List<User>> GetAll()
         {
             var list = new List<User>();
-            list = await _icrSurveySurveyDBContext.Users.ToListAsync();
+            list = await _icrSurveySurveyDBContext.Users.Select(x => new User()
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Password = "",
+                Email = x.Email,
+                UserType = x.UserType,
+            }).ToListAsync();
             return list;
         }
 

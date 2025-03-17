@@ -1,10 +1,11 @@
 ﻿using ICR_WEB_API.Service.BLL.Interface;
+using ICR_WEB_API.Service.Enum;
 using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
@@ -18,9 +19,9 @@ namespace ICR_WEB_API.Controllers
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(string userName, string password)
+        public async Task<IActionResult> Login(string userName, string password, UserType userType = UserType.User)
         {
-            var result = await _authService.AuthenticateUser(userName, password);
+            var result = await _authService.AuthenticateUser(userName, password, userType);
 
             if (result.Token != null)
             {

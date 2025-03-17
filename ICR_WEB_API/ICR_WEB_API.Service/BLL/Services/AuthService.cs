@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using ICR_WEB_API.Service.BLL.Interface;
+using ICR_WEB_API.Service.Enum;
 using ICR_WEB_API.Service.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,10 +21,10 @@ namespace ICR_WEB_API.Service.BLL.Services
             _configuration = configuration;
 
         }
-        public async Task<LoginResponse> AuthenticateUser(string userName, string passWord)
+        public async Task<LoginResponse> AuthenticateUser(string userName, string passWord, UserType userType = UserType.User)
         {
             LoginResponse user = new LoginResponse();
-            var userData = await _context.Users.FirstOrDefaultAsync(x => x.Email == userName && x.Password == passWord);
+            var userData = await _context.Users.FirstOrDefaultAsync(x => x.Email == userName && x.Password == passWord && x.UserType == userType);
             if (userData != null)
             {
 
