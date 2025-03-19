@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ICR_WEB_API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     [Authorize]
     public class ResponseController : ControllerBase
