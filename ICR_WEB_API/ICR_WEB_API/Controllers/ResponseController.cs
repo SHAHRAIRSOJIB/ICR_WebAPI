@@ -42,7 +42,7 @@ namespace ICR_WEB_API.Controllers
                 worksheet.Cell(_row, _col++).Value = "Municipality";
                 worksheet.Cell(_row, _col++).Value = "Full Address";
                 worksheet.Cell(_row, _col++).Value = "Image License Plate";
-                worksheet.Cell(_row, _col++).Value = "Is Answer Submitted";
+                //worksheet.Cell(_row, _col++).Value = "Is Answer Submitted";
                 worksheet.Cell(_row, _col++).Value = "User Email";
 
                 // Write headers
@@ -68,8 +68,8 @@ namespace ICR_WEB_API.Controllers
                     worksheet.Cell(rowIndex + 2, col++).Value = row.AIESECActivity;
                     worksheet.Cell(rowIndex + 2, col++).Value = row.Municipality;
                     worksheet.Cell(rowIndex + 2, col++).Value = row.FullAddress;
-                    worksheet.Cell(rowIndex + 2, col++).Value = $"{Request.Scheme}://{Request.Host}" + row.ImageLicensePlate;
-                    worksheet.Cell(rowIndex + 2, col++).Value = row.IsAnswerSubmitted;
+                    worksheet.Cell(rowIndex + 2, col++).Value = row.ImageLicensePlate;
+                    //worksheet.Cell(rowIndex + 2, col++).Value = row.IsAnswerSubmitted;
                     worksheet.Cell(rowIndex + 2, col++).Value = row.User != null && !String.IsNullOrEmpty(row.User.Email) ? row.User.Email : "";
 
                     for (int colIndex = 0; colIndex < formattedResponse.Columns.Count; colIndex++)
@@ -192,7 +192,7 @@ namespace ICR_WEB_API.Controllers
             {
                 return StatusCode(204, new
                 {
-                    Message = "Already submitted",
+                    Message = "ةيطغت مت اقباس ةأشنملا هذه",
                     Response = response
                 });
             }

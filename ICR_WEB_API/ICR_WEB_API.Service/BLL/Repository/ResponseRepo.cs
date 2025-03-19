@@ -4,6 +4,7 @@ using ICR_WEB_API.Service.Entity;
 using ICR_WEB_API.Service.Enum;
 using ICR_WEB_API.Service.Model.DTOs;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Jpeg;
@@ -15,10 +16,12 @@ namespace ICR_WEB_API.Service.BLL.Repository
     {
         private readonly ICRSurveyDBContext _iCRSurveyDBContext;
         private readonly IWebHostEnvironment _env;
-        public ResponseRepo(ICRSurveyDBContext iCRSurveyDBContext, IWebHostEnvironment env)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public ResponseRepo(ICRSurveyDBContext iCRSurveyDBContext, IWebHostEnvironment env, IHttpContextAccessor httpContextAccessor)
         {
             _iCRSurveyDBContext = iCRSurveyDBContext;
             _env = env;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<string?> UploadImage(UploadFileDTO fileInfo)
@@ -46,7 +49,9 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     return "wwwroot folder is not created";
                 }
 
-                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
+                var path = "\\cdn.icrcloud.com\\wwwroot";
+
+                var uploadsFolder = Path.Combine(path, "uploads");
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
@@ -144,6 +149,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
 
             var responses = await _iCRSurveyDBContext.Responses
+                .Where(r => r.IsAnswerSubmitted)
                 .Include(r => r.Answers)
                 .ThenInclude(a => a.SelectedOption)
                 .Include(r => r.Answers)
@@ -224,7 +230,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     AIESECActivity = response.AIESECActivity,
                     OwnerIDNumber = response.OwnerIDNumber,
                     OwnerName = response.OwnerName,
-                    ImageLicensePlate = response.ImageLicensePlate,
+                    ImageLicensePlate = $"{_httpContextAccessor.HttpContext?.Request.Scheme}://cdn.icrcloud.com" + response.ImageLicensePlate,
                     IsAnswerSubmitted = response.IsAnswerSubmitted,
                     User = response.User,
                     Answers = answerDict
