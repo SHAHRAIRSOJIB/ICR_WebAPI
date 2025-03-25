@@ -99,30 +99,42 @@ namespace ICR_WEB_API.Service.BLL.Repository
                 switch (question.Type)
                 {
                     case QuestionType.Text:
-                        var uniqueKey = $"{question.Id}-{question.Text}";
-                        var displayLabel = $"{question.Text}";
+                        var uniqueKeyText = $"{question.Id}-{question.Text}";
+                        var displayLabelText = $"{question.Text}";
                         columns.Add(new ColumnDefinition
                         {
                             QuestionId = question.Id,
-                            UniqueKey = uniqueKey,
-                            DisplayLabel = displayLabel
+                            UniqueKey = uniqueKeyText,
+                            DisplayLabel = displayLabelText
                         });
                         break;
 
                     case QuestionType.Select:
+                        if (question.Options != null)
+                        {
+                            var uniqueKeySelect = $"{question.Id}-{question.Text}";
+                            var displayLabelSelect = $"{question.Text}";
+                            columns.Add(new ColumnDefinition
+                            {
+                                QuestionId = question.Id,
+                                UniqueKey = uniqueKeySelect,
+                                DisplayLabel = displayLabelSelect
+                            });
+                        }
+                        break;
                     case QuestionType.Checkbox:
                         if (question.Options != null)
                         {
                             foreach (var option in question.Options)
                             {
-                                var uniqueKey1 = $"{question.Id}-{question.Text}-{option.Id}-{option.OptionText}";
-                                var displayLabel1 = $"{question.Text} - {option.OptionText}";
+                                var uniqueKeyCheckbox = $"{question.Id}-{question.Text}-{option.Id}-{option.OptionText}";
+                                var displayLabelCheckbox = $"{question.Text} - {option.OptionText}";
                                 columns.Add(new ColumnDefinition
                                 {
                                     QuestionId = question.Id,
                                     OptionId = option.Id,
-                                    UniqueKey = uniqueKey1,
-                                    DisplayLabel = displayLabel1
+                                    UniqueKey = uniqueKeyCheckbox,
+                                    DisplayLabel = displayLabelCheckbox
                                 });
                             }
                         }
@@ -133,14 +145,14 @@ namespace ICR_WEB_API.Service.BLL.Repository
                         {
                             foreach (var ratingScaleItem in question.RatingScaleItems)
                             {
-                                var uniqueKey1 = $"{question.Id}-{question.Text}-{ratingScaleItem.Id}-{ratingScaleItem.ItemText}";
-                                var displayLabel1 = $"{question.Text} - {ratingScaleItem.ItemText}";
+                                var uniqueKeyRating = $"{question.Id}-{question.Text}-{ratingScaleItem.Id}-{ratingScaleItem.ItemText}";
+                                var displayLabelRating = $"{question.Text} - {ratingScaleItem.ItemText}";
                                 columns.Add(new ColumnDefinition
                                 {
                                     QuestionId = question.Id,
                                     RatingItemId = ratingScaleItem.Id,
-                                    UniqueKey = uniqueKey1,
-                                    DisplayLabel = displayLabel1
+                                    UniqueKey = uniqueKeyRating,
+                                    DisplayLabel = displayLabelRating
                                 });
                             }
                         }
@@ -150,6 +162,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
             var responses = await _iCRSurveyDBContext.Responses
                 .Where(r => r.IsAnswerSubmitted)
+                .Skip(5649)
                 .Include(r => r.Answers)
                 .ThenInclude(a => a.SelectedOption)
                 .Include(r => r.Answers)
@@ -183,7 +196,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                                 var option = question.Options.FirstOrDefault(o => o.Id == answer.SelectedOptionId.Value);
                                 if (option != null)
                                 {
-                                    var key = $"{question.Id}-{question.Text}-{option.Id}-{option.OptionText}";
+                                    var key = $"{question.Id}-{question.Text}";
                                     answerDict[key] = option.OptionText;
                                 }
                             }

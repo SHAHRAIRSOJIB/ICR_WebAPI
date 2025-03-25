@@ -168,7 +168,7 @@ namespace ICR_WEB_API.Controllers
 
             return Ok(new
             {
-                Message = "Password Change Successfull",
+                Message = "Password Change Successful",
                 User = result
             });
         }
