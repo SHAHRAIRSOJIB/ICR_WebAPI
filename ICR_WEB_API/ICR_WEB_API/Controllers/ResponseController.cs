@@ -26,6 +26,7 @@ namespace ICR_WEB_API.Controllers
             using (var workbook = new XLWorkbook())
             {
                 var worksheet = workbook.Worksheets.Add("Responses");
+                worksheet.SheetView.FreezeRows(1);
                 var _row = 1;
                 var _col = 1;
 
@@ -78,16 +79,17 @@ namespace ICR_WEB_API.Controllers
                         worksheet.Cell(rowIndex + 2, colIndex + col).Value = row.Answers[columnKey];
                     }
                 }
-
+                worksheet.Columns().AdjustToContents();
                 // Save or return workbook as needed.
                 using (var stream = new MemoryStream())
                 {
                     workbook.SaveAs(stream);
                     var content = stream.ToArray();
+                    var date = DateTime.Now;
                     return File(
                         content,
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        "Responses.xlsx");
+                        "Responses_" + date.ToShortDateString() + "_" + date.ToLongTimeString() + ".xlsx");
                 }
             }
         }

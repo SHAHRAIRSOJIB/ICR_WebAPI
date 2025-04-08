@@ -49,9 +49,9 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     return "wwwroot folder is not created";
                 }
 
-                var path = "\\cdn.icrcloud.com\\wwwroot";
+                //var path = "\\cdn.icrcloud.com\\wwwroot";
 
-                var uploadsFolder = Path.Combine(path, "uploads");
+                var uploadsFolder = Path.Combine(_env.WebRootPath, "uploads");
                 if (!Directory.Exists(uploadsFolder))
                 {
                     Directory.CreateDirectory(uploadsFolder);
@@ -162,7 +162,6 @@ namespace ICR_WEB_API.Service.BLL.Repository
 
             var responses = await _iCRSurveyDBContext.Responses
                 .Where(r => r.IsAnswerSubmitted)
-                .Skip(5649)
                 .Include(r => r.Answers)
                 .ThenInclude(a => a.SelectedOption)
                 .Include(r => r.Answers)
@@ -243,7 +242,7 @@ namespace ICR_WEB_API.Service.BLL.Repository
                     AIESECActivity = response.AIESECActivity,
                     OwnerIDNumber = response.OwnerIDNumber,
                     OwnerName = response.OwnerName,
-                    ImageLicensePlate = $"{_httpContextAccessor.HttpContext?.Request.Scheme}://cdn.icrcloud.com" + response.ImageLicensePlate,
+                    ImageLicensePlate = $"{_httpContextAccessor.HttpContext?.Request.Scheme}://api.icrcloud.com" + response.ImageLicensePlate,
                     IsAnswerSubmitted = response.IsAnswerSubmitted,
                     User = response.User,
                     Answers = answerDict
