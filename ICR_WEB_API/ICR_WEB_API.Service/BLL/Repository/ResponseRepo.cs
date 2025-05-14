@@ -84,6 +84,170 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
         }
 
+        public async Task<FormattedResponseDto> GetAllFormatedResponse(int batchSize = 1000, int offset = 0)
+        {
+            var questions = await _iCRSurveyDBContext.Questions
+                .Where(q => q.IsShowable)
+                .OrderBy(q => q.SortOrder)
+                .Select(q => new
+                {
+                    q.Id,
+                    q.Text,
+                    q.Type,
+                    Options = q.Options.Select(o => new { o.Id, o.OptionText }).ToList(),
+                    RatingScaleItems = q.RatingScaleItems.Select(r => new { r.Id, r.ItemText }).ToList()
+                })
+                .ToListAsync();
+
+            var questionLookup = questions.ToDictionary(
+                q => q.Id,
+                q => new { q.Text, q.Type }
+            );
+
+            var columns = new List<ColumnDefinition>();
+            var uniqueKeyLookup = new Dictionary<(int, int?), string>(); // (QuestionId, OptionId or RatingItemId) -> UniqueKey
+
+            foreach (var question in questions)
+            {
+                switch (question.Type)
+                {
+                    case QuestionType.Text:
+                        var textKey = $"{question.Id}-{question.Text}";
+                        columns.Add(new ColumnDefinition
+                        {
+                            QuestionId = question.Id,
+                            UniqueKey = textKey,
+                            DisplayLabel = question.Text
+                        });
+                        uniqueKeyLookup[(question.Id, null)] = textKey;
+                        break;
+
+                    case QuestionType.Select:
+                        var selectKey = $"{question.Id}-{question.Text}";
+                        columns.Add(new ColumnDefinition
+                        {
+                            QuestionId = question.Id,
+                            UniqueKey = selectKey,
+                            DisplayLabel = question.Text
+                        });
+                        uniqueKeyLookup[(question.Id, null)] = selectKey;
+                        break;
+
+                    case QuestionType.Checkbox:
+                        foreach (var option in question.Options)
+                        {
+                            var checkboxKey = $"{question.Id}-{question.Text}-{option.Id}-{option.OptionText}";
+                            columns.Add(new ColumnDefinition
+                            {
+                                QuestionId = question.Id,
+                                OptionId = option.Id,
+                                UniqueKey = checkboxKey,
+                                DisplayLabel = $"{question.Text} - {option.OptionText}"
+                            });
+                            uniqueKeyLookup[(question.Id, option.Id)] = checkboxKey;
+                        }
+                        break;
+
+                    case QuestionType.Rating:
+                        foreach (var ratingScaleItem in question.RatingScaleItems)
+                        {
+                            var ratingKey = $"{question.Id}-{question.Text}-{ratingScaleItem.Id}-{ratingScaleItem.ItemText}";
+                            columns.Add(new ColumnDefinition
+                            {
+                                QuestionId = question.Id,
+                                RatingItemId = ratingScaleItem.Id,
+                                UniqueKey = ratingKey,
+                                DisplayLabel = $"{question.Text} - {ratingScaleItem.ItemText}"
+                            });
+                            uniqueKeyLookup[(question.Id, ratingScaleItem.Id)] = ratingKey;
+                        }
+                        break;
+                }
+            }
+
+            var responses = await _iCRSurveyDBContext.Responses
+                .Where(r => r.IsAnswerSubmitted)
+                .Include(r => r.Answers)
+                    .ThenInclude(a => a.SelectedOption)
+                .Include(r => r.Answers)
+                    .ThenInclude(a => a.RatingItem)
+                .Include(r => r.User)
+                .OrderBy(r => r.Id)
+                .Skip(offset)
+                .Take(batchSize)
+                .ToListAsync();
+
+            var formattedResponse = new FormattedResponseDto
+            {
+                Columns = columns,
+                Rows = new List<FormattedResponseRowDto>()
+            };
+
+            foreach (var response in responses)
+            {
+                var answerDict = columns.ToDictionary(c => c.UniqueKey, c => string.Empty);
+
+                foreach (var answer in response.Answers)
+                {
+                    if (questionLookup.TryGetValue(answer.QuestionId, out var questionInfo))
+                    {
+                        switch (questionInfo.Type)
+                        {
+                            case QuestionType.Text:
+                                if (uniqueKeyLookup.TryGetValue((answer.QuestionId, null), out var textKey))
+                                {
+                                    answerDict[textKey] = answer.TextResponse ?? string.Empty;
+                                }
+                                break;
+
+                            case QuestionType.Select:
+                                if (answer.SelectedOption != null && uniqueKeyLookup.TryGetValue((answer.QuestionId, null), out var selectKey))
+                                {
+                                    answerDict[selectKey] = answer.SelectedOption.OptionText;
+                                }
+                                break;
+
+                            case QuestionType.Checkbox:
+                                if (answer.SelectedOption != null && uniqueKeyLookup.TryGetValue((answer.QuestionId, answer.SelectedOption.Id), out var checkboxKey))
+                                {
+                                    answerDict[checkboxKey] = answer.SelectedOption.OptionText;
+                                }
+                                break;
+
+                            case QuestionType.Rating:
+                                if (answer.RatingItem != null && uniqueKeyLookup.TryGetValue((answer.QuestionId, answer.RatingItem.Id), out var ratingKey))
+                                {
+                                    answerDict[ratingKey] = answer.RatingValue ?? string.Empty;
+                                }
+                                break;
+                        }
+                    }
+                }
+
+                formattedResponse.Rows.Add(new FormattedResponseRowDto
+                {
+                    ResponseId = response.Id,
+                    SubmissionDate = response.SubmissionDate,
+                    UnifiedLicenseNumber = response.UnifiedLicenseNumber,
+                    LicenseIssueDateLabel = response.LicenseIssueDateLabel,
+                    ShopName = response.ShopName,
+                    DistrictName = response.DistrictName,
+                    StreetName = response.StreetName,
+                    Municipality = response.Municipality,
+                    FullAddress = response.FullAddress,
+                    AIESECActivity = response.AIESECActivity,
+                    OwnerIDNumber = response.OwnerIDNumber,
+                    OwnerName = response.OwnerName,
+                    ImageLicensePlate = $"{_httpContextAccessor.HttpContext?.Request.Scheme}://api.icrcloud.com{response.ImageLicensePlate}",
+                    IsAnswerSubmitted = response.IsAnswerSubmitted,
+                    User = response.User,
+                    Answers = answerDict
+                });
+            }
+
+            return formattedResponse;
+        }
+
         public async Task<FormattedResponseDto> GetAllFormatedResponse()
         {
             var questions = await _iCRSurveyDBContext.Questions
