@@ -325,6 +325,8 @@ namespace ICR_WEB_API.Service.BLL.Repository
             }
 
             var responses = await _iCRSurveyDBContext.Responses
+                .AsNoTracking()
+                .Where(r => r.SubmissionDate >= DateTime.UtcNow.AddDays(-30)) // Last 30 days filter can be applied here if needed
                 .Where(r => r.IsAnswerSubmitted)
                 .Include(r => r.Answers)
                 .ThenInclude(a => a.SelectedOption)
